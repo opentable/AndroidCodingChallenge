@@ -1,6 +1,6 @@
 # The Challenge:
 
-The challenge is to create a simple Android app that exercises a REST-ful API. The API endpoint `http://api.nytimes.com/svc/movies/v2/reviews/dvd-picks.json?order=by-date&api-key=b75da00e12d54774a2d362adddcc9bef&offset=0` returns a JSON object which is a list of different movie reviews published by the New York Times. 
+The challenge is to create a simple Android app that exercises a REST-ful API. The API endpoint `http://api.nytimes.com/svc/movies/v2/reviews/dvd-picks.json?order=by-date&api-key=KoRB4K5LRHygfjCL2AH6iQ7NeUqDAGAB&offset=0` returns a JSON object which is a list of different movie reviews published by the New York Times. 
 For example:
 ```json
   "results": [
