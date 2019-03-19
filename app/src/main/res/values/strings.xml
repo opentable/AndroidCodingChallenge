@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Movie Reviews</string>
+    <string name="action_about">About</string>
+    <string name="rating_label">Rating:</string>
+    <string name="rating_na">N/A</string>
+    <string name="reviewer_label">Reviewer:</string>
+    <string name="date_label">Date:</string>
+</resources>
