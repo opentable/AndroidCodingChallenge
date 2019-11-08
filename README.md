@@ -41,6 +41,9 @@ Feel free to make any assumptions you want along the way or use any third party 
 - This is also most of the code you'll be showing us – don't understimate the difficulty of the task, or the importance of this exercise in our process, and rush your PR. Put up your best professional game.
 - This isn't just about handling the happy path. Think slow network (or no network at all), supporting different device sizes, ease of build and run of the project. If we can't check out and click the run button in Android Studio, you're off to a bad start (we've had PRs without a graddle for instance).
 - "Surprise us by writing the most boring and unambiguous code possible". We are more interested in stability/maintainability of your code than in "show off" features. We'd much rather know how you'd handle errors hollistically, or dates and their timezones, than seeing how you'd implement parallax scrolling with sparkles and flames for instance.
-- Tests (unit or UI) are welcome, but not required.
+- Tests (unit and/or UI)
 - Explanations on any choice you've made are welcome.
 - We appreciate there's a lot that is asked in this exercise. If you need more time, feel free to ask. If you need to de-prioritize something, apply the same judgement you would on a professional project, argument your decision.
+
+Bonus Points:
+  - Filter by Raiting
