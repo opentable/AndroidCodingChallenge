@@ -27,7 +27,7 @@ class MovieReviewListFragment : Fragment(), OnMovieReviewRecyclerViewInteraction
         fun newInstance() = MovieReviewListFragment()
     }
 
-    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: MovieReviewListViewModel
     private lateinit var recyclerViewAdapter: MovieReviewRecyclerViewAdapter
     lateinit var recyclerView: RecyclerView
     override fun onCreateView(
@@ -45,7 +45,7 @@ class MovieReviewListFragment : Fragment(), OnMovieReviewRecyclerViewInteraction
         //Get ViewModel from MovieReviewViewModelFactory, allowing customization of data source
         viewModel = ViewModelProviders.of(this,
             MovieReviewViewModelFactory(NYTimesMovieReviewsUseCase.provide())
-        ).get(MainViewModel::class.java)
+        ).get(MovieReviewListViewModel::class.java)
 
 
         //Implementing State Machine pattern allow the View(fragment) to strictly update itself
@@ -74,7 +74,7 @@ class MovieReviewListFragment : Fragment(), OnMovieReviewRecyclerViewInteraction
         })
 
         //When fragment first started and was in Uninitialized state, start fetching reviews
-        if (viewModel.getState().value is MainViewModel.State.Uninitialized) {
+        if (viewModel.getState().value is MovieReviewListViewModel.State.Uninitialized) {
             viewModel.fetchMovieReviews()
         }
     }
@@ -83,12 +83,12 @@ class MovieReviewListFragment : Fragment(), OnMovieReviewRecyclerViewInteraction
         viewModel.getState().observe(this, Observer { it?.let { onStateChanged(it) } })
     }
 
-    private fun onStateChanged(state: MainViewModel.State) = when (state) {
-        is MainViewModel.State.ReviewsLoaded -> showReviewsLoaded()
-        is MainViewModel.State.ReviewsLoadedMore -> showReviewsLoadedMore(state)
-        is MainViewModel.State.Loading -> showLoading()
-        is MainViewModel.State.LoadingMore -> showLoadingMore()
-        is MainViewModel.State.Error -> showError(state)
+    private fun onStateChanged(state: MovieReviewListViewModel.State) = when (state) {
+        is MovieReviewListViewModel.State.ReviewsLoaded -> showReviewsLoaded()
+        is MovieReviewListViewModel.State.ReviewsLoadedMore -> showReviewsLoadedMore(state)
+        is MovieReviewListViewModel.State.Loading -> showLoading()
+        is MovieReviewListViewModel.State.LoadingMore -> showLoadingMore()
+        is MovieReviewListViewModel.State.Error -> showError(state)
         else -> {}
     }
 
@@ -97,7 +97,7 @@ class MovieReviewListFragment : Fragment(), OnMovieReviewRecyclerViewInteraction
         Toast.makeText(this.context, "Loaded.  Item count ${viewModel.getItemCount()}.", Toast.LENGTH_SHORT).show()
     }
 
-    private fun showReviewsLoadedMore(state: MainViewModel.State.ReviewsLoadedMore) {
+    private fun showReviewsLoadedMore(state: MovieReviewListViewModel.State.ReviewsLoadedMore) {
         recyclerViewAdapter.notifyItemRangeChanged(state.offset, viewModel.getItemCount())
         Toast.makeText(this.context, "Loaded some more. Item count ${viewModel.getItemCount()}.", Toast.LENGTH_SHORT).show()
 
@@ -111,7 +111,7 @@ class MovieReviewListFragment : Fragment(), OnMovieReviewRecyclerViewInteraction
         Toast.makeText(this.context, "Loading some more.", Toast.LENGTH_SHORT).show()
     }
 
-    private fun showError(state: MainViewModel.State.Error) {
+    private fun showError(state: MovieReviewListViewModel.State.Error) {
         Toast.makeText(this.context, "Error: "+state.throwable.toString(), Toast.LENGTH_LONG).show()
     }
 }

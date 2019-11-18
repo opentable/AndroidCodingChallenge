@@ -14,6 +14,6 @@ class MovieReviewViewModelFactory : ViewModelProvider.Factory {
         mUseCase = useCase
     }
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return MainViewModel(mUseCase) as T
+        return MovieReviewListViewModel(mUseCase) as T
     }
 }
