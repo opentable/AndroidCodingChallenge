@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">NYTimesMovies</string>
+    <string name="rating">Rating:</string>
+    <string name="by">by </string>
+    <string name="poster">Movie Poster</string>
+</resources>
