@@ -7,12 +7,10 @@ import com.quan.lam.nytimesmovies.usecase.BaseMovieReviewsUseCase
 /**
  * Extension of ViewModelProvider.Factory to allow building ViewModel with custom parameters.
  */
-class MovieReviewViewModelFactory : ViewModelProvider.Factory {
-    private var mUseCase: BaseMovieReviewsUseCase
+class MovieReviewViewModelFactory(useCase: BaseMovieReviewsUseCase) : ViewModelProvider.Factory {
+    private var mUseCase: BaseMovieReviewsUseCase = useCase
 
-    constructor(useCase: BaseMovieReviewsUseCase) {
-        mUseCase = useCase
-    }
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return MovieReviewListViewModel(mUseCase) as T
     }
