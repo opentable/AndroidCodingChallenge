@@ -2,7 +2,9 @@ package com.quan.lam.nytimesmovies.ui.main
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import com.quan.lam.nytimesmovies.model.MPAARating
 import com.quan.lam.nytimesmovies.usecase.BaseMovieReviewsUseCase
 
 /**
@@ -28,6 +30,7 @@ class MovieReviewListViewModel(private var moviesReviewsUseCase: BaseMovieReview
     private val state by lazy { MediatorLiveData<State>() }
     //Fetched reviews will be store in this list
     private val reviewList by lazy { ArrayList<MovieReviewListItem> () }
+    private val filteredList by lazy { ArrayList<MovieReviewListItem> () }
     init {
         state.value = State.Uninitialized
         //The Fragment State will observe
@@ -57,9 +60,10 @@ class MovieReviewListViewModel(private var moviesReviewsUseCase: BaseMovieReview
 
     fun getState(): LiveData<State> = state
 
-    fun getReviewsList() = reviewList
+    fun getReviewsList() = filteredList
 
-    fun getItemCount(): Int = reviewList.size
+    fun getFilteredItemCount() = filteredList.size
+    fun getRealItemCount(): Int = reviewList.size
 
     /**
      * On Fetch result returned
@@ -68,7 +72,14 @@ class MovieReviewListViewModel(private var moviesReviewsUseCase: BaseMovieReview
     fun onFetchMoviesReviewResult(result: BaseMovieReviewsUseCase.Result?) {
         when (result) {
             is BaseMovieReviewsUseCase.Result.OnSuccess -> {
-                reviewList.addAll(result.result.map { MovieReviewListItem(it) })
+                val mappedResult = result.result.map { MovieReviewListItem(it) }
+                reviewList.addAll(mappedResult)
+
+                //Save the position of filtered list update
+                val offset = filteredList.size
+                filteredList.addAll(mappedResult.filter {
+                    it.mpaa_rating.order <= MPAARating.globalAgeLimit.value!!.order})
+
                 when (state.value) {
                     is State.Loading -> {
                         state.value = State.ReviewsLoaded
@@ -76,13 +87,20 @@ class MovieReviewListViewModel(private var moviesReviewsUseCase: BaseMovieReview
                     is State.LoadingMore -> {
                         //Pass the offset value to the State object in order for the view to
                         //react accordingly
-                        val offset = (state.value as State.LoadingMore).offset
                         state.value = State.ReviewsLoadedMore(offset)
                     }
                 }
             }
             //Pass the error to the view to display if needed
             is BaseMovieReviewsUseCase.Result.OnError -> state.value = State.Error(result.throwable)
+        }
+    }
+
+    fun onGlobalAgeLimitChange(ageLimit: MPAARating) {
+        if (reviewList.size>0) {
+            filteredList.clear()
+            filteredList.addAll(reviewList.filter { it.mpaa_rating.order <= ageLimit.order })
+            state.value = State.ReviewsLoaded
         }
     }
 }

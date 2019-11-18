@@ -1,5 +1,6 @@
 package com.quan.lam.nytimesmovies.ui.main
 
+import com.quan.lam.nytimesmovies.model.MPAARating
 import com.quan.lam.nytimesmovies.model.MovieReviewDAO
 
 /**
@@ -9,14 +10,18 @@ import com.quan.lam.nytimesmovies.model.MovieReviewDAO
  * the need arise.
  */
 data class MovieReviewListItem(val display_title: String = "",
-                               val mpaa_rating: String = "",
+                               val mpaa_rating: MPAARating,
                                val byline: String = "",
                                val headline: String = "",
                                val summary_short: String = "",
                                val publication_date: String = "",
                                val multimedia: String = "") {
     constructor(reviewDAO: MovieReviewDAO): this(reviewDAO.display_title,
-        if (reviewDAO.mpaa_rating.isEmpty()) {"N/A"} else {reviewDAO.mpaa_rating},
+        if (!reviewDAO.mpaa_rating.isEmpty()) {
+            MPAARating(reviewDAO.mpaa_rating)
+        } else {
+            MPAARating("N/A")
+        },
         reviewDAO.byline,
         if (reviewDAO.headline.contains("Review:")) {
             reviewDAO.headline.substringAfter("Review:").trim()
@@ -24,4 +29,6 @@ data class MovieReviewListItem(val display_title: String = "",
         reviewDAO.summary_short,
         reviewDAO.publication_date,
         reviewDAO.multimedia.src)
+
+
 }

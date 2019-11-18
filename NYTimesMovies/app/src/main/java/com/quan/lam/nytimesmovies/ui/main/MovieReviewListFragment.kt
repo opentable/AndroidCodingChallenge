@@ -8,9 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.quan.lam.nytimesmovies.R
+import com.quan.lam.nytimesmovies.model.MPAARating
 import com.quan.lam.nytimesmovies.usecase.NYTimesMovieReviewsUseCase
 
 /**
@@ -20,16 +22,14 @@ import com.quan.lam.nytimesmovies.usecase.NYTimesMovieReviewsUseCase
  */
 class MovieReviewListFragment : Fragment(), OnMovieReviewRecyclerViewInteractionListener {
     override fun onInteraction(item: MovieReviewListItem) {
-
-    }
-
-    companion object {
-        fun newInstance() = MovieReviewListFragment()
+        NavHostFragment.findNavController(this)
+            .navigate(R.id.action_mainFragment_to_ratingFragment)
     }
 
     private lateinit var viewModel: MovieReviewListViewModel
     private lateinit var recyclerViewAdapter: MovieReviewRecyclerViewAdapter
-    lateinit var recyclerView: RecyclerView
+    private lateinit var recyclerView: RecyclerView
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -80,7 +80,12 @@ class MovieReviewListFragment : Fragment(), OnMovieReviewRecyclerViewInteraction
     }
 
     private fun setUpViewModelStateObservers() {
-        viewModel.getState().observe(this, Observer { it?.let { onStateChanged(it) } })
+        //Register observer for fragment state change
+        viewModel.getState().observe(viewLifecycleOwner, Observer { it?.let { onStateChanged(it) } })
+        //Register observer for movie age limit change
+        val ageLimitObserver: Observer<MPAARating> = Observer { viewModel.onGlobalAgeLimitChange(it) }
+        MPAARating.globalAgeLimit.observe(viewLifecycleOwner, ageLimitObserver)
+
     }
 
     private fun onStateChanged(state: MovieReviewListViewModel.State) = when (state) {
@@ -92,15 +97,16 @@ class MovieReviewListFragment : Fragment(), OnMovieReviewRecyclerViewInteraction
         else -> {}
     }
 
+    //Refresh the whole list
     private fun showReviewsLoaded() {
-        recyclerViewAdapter.notifyItemRangeChanged(0, viewModel.getItemCount())
-        Toast.makeText(this.context, "Loaded.  Item count ${viewModel.getItemCount()}.", Toast.LENGTH_SHORT).show()
+        recyclerViewAdapter.notifyItemRangeChanged(0, viewModel.getFilteredItemCount())
+        //Toast.makeText(this.context, "Loaded.  Item count ${viewModel.getFilteredItemCount()}.", Toast.LENGTH_SHORT).show()
     }
 
+    //Refresh added part of the list
     private fun showReviewsLoadedMore(state: MovieReviewListViewModel.State.ReviewsLoadedMore) {
-        recyclerViewAdapter.notifyItemRangeChanged(state.offset, viewModel.getItemCount())
-        Toast.makeText(this.context, "Loaded some more. Item count ${viewModel.getItemCount()}.", Toast.LENGTH_SHORT).show()
-
+        recyclerViewAdapter.notifyItemRangeChanged(state.offset, viewModel.getFilteredItemCount())
+        //Toast.makeText(this.context, "Loaded some more. Item count ${viewModel.getFilteredItemCount()}.", Toast.LENGTH_SHORT).show()
     }
 
     private fun showLoading() {

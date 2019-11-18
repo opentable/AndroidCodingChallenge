@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.quan.lam.nytimesmovies.R
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.moview_review_list_item.view.*
+import kotlinx.android.synthetic.main.movie_review_list_item.view.*
 
 /**
  * Adapter for MovieReviewListFragment's MovieReview List
@@ -32,7 +32,7 @@ class MovieReviewRecyclerViewAdapter(
         viewType: Int
     ): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.moview_review_list_item, parent, false)
+            .inflate(R.layout.movie_review_list_item, parent, false)
         return ViewHolder(view)
     }
 
@@ -42,7 +42,7 @@ class MovieReviewRecyclerViewAdapter(
         //Due to restriction of time, empty field will be shown as such
         val item = mData[position]
         holder.mTitle.text = item.display_title
-        holder.mRating.text = item.mpaa_rating
+        holder.mRating.text = item.mpaa_rating.mpaa_rating
         holder.mHeadLine.text = item.headline
         holder.mSummaryShort.text = item.summary_short
         holder.mAuthorGroup.text = "by ${item.byline} ${item.publication_date}"
