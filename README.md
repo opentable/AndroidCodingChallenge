@@ -34,7 +34,7 @@ Using this endpoint, show a list of these items, with each row displaying at lea
 - `publication_date`
 - `multimedia` 
 
-Feel free to make any assumptions you want along the way or use any third party libraries as needed (just document them in a your pull request).
+Feel free to make any assumptions you want along the way or use any third party libraries as needed and document why you used them.
 
 ### General Instructions:
 - Dont create a PR against this Repo
