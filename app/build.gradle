@@ -24,6 +24,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -40,18 +45,27 @@ dependencies {
     implementation libs.material
     implementation libs.androidx.activity
     implementation libs.androidx.constraintlayout
+
+    // navigation
+    implementation libs.androidx.navigation.fragment
+    implementation libs.androidx.navigation.ui
+
+    // paging
+    implementation libs.androidx.paging.runtime
+    implementation libs.androidx.paging.rxjava
+
     // dagger
     implementation libs.dagger
     kapt libs.dagger.compiler
 
-    //retrofit
+    // retrofit
     implementation libs.retrofit
     implementation libs.retrofit.rx.adapter
 
-    //glide
+    // glide
     implementation libs.glide
 
-    //reactive x
+    // reactive x
     implementation libs.rx.android
     implementation libs.rx.java
     implementation libs.rx.kotlin
