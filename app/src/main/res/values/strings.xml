@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">AndroidOTChallenge</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Common list strings -->
+    <string name="common_list_books_loading">Loading books</string>
+    <string name="common_list_books_loading_error_server">Seems like an error occurred in the server. Please try again later.</string>
+    <string name="common_list_books_loading_error_network">Seems like there\'s an issue in your internet connection. Please check your connection and try again.</string>
+    <string name="common_list_books_loading_error_retry">Retry</string>
+
 </resources>

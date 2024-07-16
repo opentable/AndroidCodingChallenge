@@ -6,10 +6,29 @@
     android:padding="16dp"
     tools:context=".presentation.BookListFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/book_list"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/book_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <include
+        android:id="@+id/loading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"/>
+        layout="@layout/item_list_loading" />
+
+    <include
+        android:id="@+id/retry"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/item_list_retry" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

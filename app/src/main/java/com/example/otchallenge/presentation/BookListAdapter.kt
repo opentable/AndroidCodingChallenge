@@ -1,16 +1,12 @@
 package com.example.otchallenge.presentation
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
-import com.example.otchallenge.R
-import com.example.otchallenge.data.model.Book
+import com.example.otchallenge.data.entity.Book
 import com.example.otchallenge.databinding.ItemBookBinding
 
 class BookListAdapter : PagingDataAdapter<Book, BookListAdapter.ItemViewHolder>(Comparator) {
@@ -54,7 +50,7 @@ class BookListAdapter : PagingDataAdapter<Book, BookListAdapter.ItemViewHolder>(
             }
 
         private fun updateView(book: Book?) {
-            binding.bookTitle.text = book?.name
+            binding.bookTitle.text = book?.title
             binding.bookAuthor.text = book?.author
             binding.bookDescription.text = book?.description
 

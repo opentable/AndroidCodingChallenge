@@ -1,74 +1,83 @@
 package com.example.otchallenge.presentation
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
-import androidx.recyclerview.widget.RecyclerView.Orientation
-import com.example.otchallenge.R
-import com.example.otchallenge.data.model.Book
+import com.example.otchallenge.MyApplication
+import com.example.otchallenge.data.entity.Book
 import com.example.otchallenge.databinding.FragmentBookListBinding
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class BookListFragment : Fragment() {
+class BookListFragment : Fragment(), HardcoverFictionListContract.View {
+
+    @Inject
+    lateinit var presenter: HardcoverFictionListContract.Presenter
 
     private lateinit var binding: FragmentBookListBinding
-    private val bookListAdapter = BookListAdapter()
 
-    private val dummyBooks = listOf(
-        Book(
-            name = "THE WOMAN",
-            author = "Kristin Hannah",
-            description = "In 1965, a nursing student follows her brother to serve during the Vietnam War and returns to a divided America.",
-            imageUrl = "https://storage.googleapis.com/du-prd/books/images/9781250178633.jpg"
-        ),
-        Book(
-            name = "SWAN SONG",
-            author = "Elin Hilderbrand",
-            description = "Nantucket residents are alarmed when a home, recently sold at an exorbitant price, goes up in flames and someone goes missing.",
-            imageUrl = "https://storage.googleapis.com/du-prd/books/images/9780316258876.jpg"
-        ),
-        Book(
-            name = "THE GOD OF THE WOODS",
-            author = "Liz Moore",
-            description = "When a 13-year-old girl disappears from an Adirondack summer camp in 1975, secrets kept by the Van Laar family emerge.",
-            imageUrl = "https://storage.googleapis.com/du-prd/books/images/9780593418918.jpg"
-        )
-    )
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        // Deprecated but necessary to retain Presenter state
-        retainInstance = true
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                bookListAdapter.submitData(
-                    pagingData = PagingData.from(dummyBooks)
-                )
+    private val bookListAdapter = BookListAdapter().apply {
+        addLoadStateListener { loadStates ->
+            when  {
+                loadStates.refresh is LoadState.Loading -> {
+                    if (itemCount > 0) {
+                        binding.bookList.visibility = View.VISIBLE
+                        binding.refreshLayout.isRefreshing = true
+                        binding.loading.root.visibility = View.GONE
+                    } else {
+                        binding.bookList.visibility = View.GONE
+                        binding.refreshLayout.isRefreshing = false
+                        binding.loading.root.visibility = View.VISIBLE
+                    }
+                    binding.retry.root.visibility = View.GONE
+                }
+                loadStates.hasError -> {
+                    binding.bookList.visibility = View.GONE
+                    binding.retry.root.visibility = View.VISIBLE
+                    binding.refreshLayout.isRefreshing = false
+                    binding.loading.root.visibility = View.GONE
+                }
+                loadStates.isIdle -> {
+                    binding.bookList.visibility = View.VISIBLE
+                    binding.retry.root.visibility = View.GONE
+                    binding.refreshLayout.isRefreshing = false
+                    binding.loading.root.visibility = View.GONE
+                }
             }
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Deprecated but necessary to retain Presenter
+        retainInstance = true
+        injectDependencies()
+        presenter.subscribeToList(lifecycleScope)
+    }
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentBookListBinding.inflate(inflater)
-        return binding.root
+    ): View {
+        return FragmentBookListBinding.inflate(inflater)
+            .also { binding ->
+                setupView(binding)
+            }.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        presenter.attachView(this)
 
         binding.bookList.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -77,6 +86,37 @@ class BookListFragment : Fragment() {
             )
             adapter = bookListAdapter
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        presenter.detachView()
+    }
+
+    override fun submitPage(page: PagingData<Book>) {
+        bookListAdapter.submitData(
+            lifecycle = viewLifecycleOwner.lifecycle,
+            pagingData = page
+        )
+    }
+
+    private fun setupView(binding: FragmentBookListBinding) {
+        with(binding) {
+            this@BookListFragment.binding = this
+            loading.root.visibility = View.GONE
+            retry.root.visibility = View.GONE
+            retry.btnRetry.setOnClickListener {
+                bookListAdapter.retry()
+            }
+            refreshLayout.setOnRefreshListener {
+                bookListAdapter.refresh()
+            }
+        }
+    }
+
+    private fun injectDependencies() {
+        (requireActivity().application as MyApplication)
+            .appComponent.inject(this)
     }
 
 }
