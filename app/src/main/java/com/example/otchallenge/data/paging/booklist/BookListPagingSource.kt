@@ -1,32 +1,18 @@
-package com.example.otchallenge.data.paging
+package com.example.otchallenge.data.paging.booklist
 
-import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import androidx.paging.rxjava2.RxPagingSource
 import com.example.otchallenge.data.entity.Book
 import com.example.otchallenge.data.remote.BooksApi
 import com.example.otchallenge.data.remote.mappers.toBookEntityList
-import com.example.otchallenge.di.SchedulersModule
+import com.example.otchallenge.data.remote.mappers.wrappedError
 import io.reactivex.Scheduler
 import io.reactivex.Single
-import javax.inject.Inject
-import javax.inject.Named
 
-class HardCoverFictionPagingSourceFactory @Inject constructor(
-    private val bookListApi: BooksApi,
-    @Named(SchedulersModule.IO)
-    private val ioScheduler: Scheduler
-): PagingSourceFactory<Int, Book> {
-    override fun invoke(): PagingSource<Int, Book> {
-        return HardcoverFictionPagingSource(
-            bookListApi = bookListApi,
-            ioScheduler = ioScheduler
-        )
-    }
-}
 
-class HardcoverFictionPagingSource (
-    private val bookListApi: BooksApi,
+class BookListPagingSource (
+    private val listName: String,
+    private val booksApi: BooksApi,
     private val ioScheduler: Scheduler
 ) : RxPagingSource<Int, Book>() {
 
@@ -34,15 +20,18 @@ class HardcoverFictionPagingSource (
 
         val currentKey = params.key ?: 0
 
-        return bookListApi.getHardcoverFiction(offset = currentKey)
+        return booksApi.getBookList(
+            name = listName,
+            offset = currentKey
+        )
             .map { response ->
                 response.toBookEntityList()
             }
             .map { books->
-                books.toLoadResult(currentKey)
+                books.toLoadResult(currentKey, params.loadSize)
             }
             .onErrorReturn { error ->
-                LoadResult.Error(error)
+                LoadResult.Error(error.wrappedError)
             }
             .subscribeOn(ioScheduler)
     }
@@ -53,13 +42,15 @@ class HardcoverFictionPagingSource (
                 state.closestPageToPosition(anchor)
             }
             .let { page ->
-                page?.prevKey?.plus(20) ?: page?.nextKey?.minus(20)
+                page?.prevKey?.plus(state.config.pageSize) ?: page?.nextKey?.minus(state.config.pageSize)
             }
     }
 
-    private fun List<Book>.toLoadResult(key: Int): LoadResult<Int, Book> {
-        val prevKey = if (key == 0) null else key - 20
-        val nextKey = if (size < 20) null else key + 20
+    private fun List<Book>.toLoadResult(key: Int, loadSize: Int): LoadResult<Int, Book> {
+
+        val prevKey: Int? = if (key == 0) null else key - loadSize
+        val nextKey: Int? = if (size < loadSize) null else key + loadSize
+
         return LoadResult.Page(
             data = this,
             prevKey = prevKey,

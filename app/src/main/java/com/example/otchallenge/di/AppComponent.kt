@@ -1,7 +1,8 @@
 package com.example.otchallenge.di
 
 import com.example.otchallenge.MainActivity
-import com.example.otchallenge.di.data.PagingModule
+import com.example.otchallenge.di.data.PagingConfigModule
+import com.example.otchallenge.di.data.PagingSourceFactoryModule
 import com.example.otchallenge.di.data.PresenterModule
 import com.example.otchallenge.di.data.RemoteModule
 import com.example.otchallenge.di.data.RepositoryModule
@@ -14,7 +15,8 @@ import javax.inject.Singleton
 	modules = [
 		SchedulersModule::class,
 		RemoteModule::class,
-		PagingModule::class,
+		PagingConfigModule::class,
+		PagingSourceFactoryModule::class,
 		RepositoryModule::class,
 		PresenterModule::class
 	]

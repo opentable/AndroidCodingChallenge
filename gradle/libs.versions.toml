@@ -20,6 +20,9 @@ glide = "4.16.0"
 rx-android = "2.1.1"
 rx-java = "2.2.21"
 rx-kotlin = "2.4.0"
+mockk = "1.13.12"
+coroutines = "1.9.0-RC"
+kluent = "1.73"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -35,6 +38,7 @@ androidx-navigation-fragment = { group = "androidx.navigation", name = "navigati
 androidx-navigation-ui = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" }
 androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging" }
 androidx-paging-rxjava = { group = "androidx.paging", name = "paging-rxjava2", version.ref = "paging" }
+androidx-paging-testing = { group = "androidx.paging", name = "paging-testing", version.ref = "paging" }
 dagger = { group = "com.google.dagger", name = "dagger", version.ref = "dagger" }
 dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "dagger" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
@@ -46,6 +50,11 @@ glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "gl
 rx-java = {group = "io.reactivex.rxjava2", name="rxjava", version.ref = "rx-java"}
 rx-android = {group = "io.reactivex.rxjava2", name="rxandroid", version.ref = "rx-android"}
 rx-kotlin = {group = "io.reactivex.rxjava2", name="rxkotlin", version.ref = "rx-kotlin"}
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines"}
+kluent = { group = "org.amshove.kluent", name = "kluent", version.ref = "kluent" }
+kluent-android = { group = "org.amshove.kluent", name = "kluent-android", version.ref = "kluent" }
+kluent-test-junit = { group = "org.amshove.kluent", name = "kluent-test-junit", version.ref = "kluent" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

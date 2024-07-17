@@ -31,7 +31,7 @@ class BookListPresenter @Inject constructor (
     }
 
     override fun subscribeToList(coroutineScope: CoroutineScope) {
-        bookRepository.getHardcoverFictionList()
+        bookRepository.getBookList("hardcover-fiction")
             .cachedIn(coroutineScope)
             .subscribe(pageSubject)
     }
