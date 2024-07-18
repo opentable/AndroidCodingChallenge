@@ -8,6 +8,7 @@ interface BookListContract {
 
     interface View {
         fun submitPage(page: PagingData<Book>)
+        fun retryLoadingIfNecessary()
     }
 
     interface Presenter {

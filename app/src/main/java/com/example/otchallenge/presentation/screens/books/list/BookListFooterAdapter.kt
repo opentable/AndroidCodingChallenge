@@ -19,7 +19,7 @@ class BookListFooterAdapter(
     ) {
         when (loadState) {
             is LoadState.Loading -> holder.showLoading()
-            is LoadState.Error -> holder.showLoadingFailed()
+            is LoadState.Error -> holder.showLoadingFailed(loadState)
             is LoadState.NotLoading -> holder.hideAll()
         }
     }
@@ -35,26 +35,31 @@ class BookListFooterAdapter(
                 false
             )
             .let { binding ->
-                binding.lytLoadingFailed.btnDetails.setOnClickListener {
-                    onDetailsClick(loadState as LoadState.Error)
-                }
-                binding.lytLoadingFailed.btnRetry.setOnClickListener { onRetryClick() }
-                FooterViewHolder(binding)
+                FooterViewHolder(binding, onDetailsClick, onRetryClick)
             }
     }
 
     class FooterViewHolder (
         private val binding: ItemListFooterBinding,
+        private val onDetailsClick: (LoadState.Error) -> Unit,
+        onRetryClick: () -> Unit
     ): RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            binding.lytLoadingFailed.btnRetry.setOnClickListener { onRetryClick() }
+        }
 
         fun showLoading() {
             binding.lytLoading.root.isVisible = true
             binding.lytLoadingFailed.root.isVisible = false
         }
 
-        fun showLoadingFailed() {
+        fun showLoadingFailed(loadState: LoadState.Error) {
             binding.lytLoading.root.isVisible = false
             binding.lytLoadingFailed.root.isVisible = true
+            binding.lytLoadingFailed.btnDetails.setOnClickListener {
+                onDetailsClick(loadState)
+            }
         }
 
         fun hideAll() {

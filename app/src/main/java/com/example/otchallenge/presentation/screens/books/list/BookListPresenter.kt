@@ -4,16 +4,22 @@ import androidx.paging.PagingData
 import androidx.paging.rxjava2.cachedIn
 import com.example.otchallenge.data.entity.Book
 import com.example.otchallenge.data.repository.BookRepository
+import com.example.otchallenge.di.data.MonitorModule
+import com.example.otchallenge.presentation.extensions.subscribe
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
+import javax.inject.Named
 
 class BookListPresenter @Inject constructor (
-    private val bookRepository: BookRepository
+    private val bookRepository: BookRepository,
+    @Named(MonitorModule.INTERNET_CONNECTION)
+    private val internetConnectionMonitor: Observable<Boolean>
 ) : BookListContract.Presenter {
 
-    private lateinit var disposables: CompositeDisposable
+    private var subscriptions: CompositeDisposable? = null
     private val pageSubject = BehaviorSubject.create<PagingData<Book>>()
     private var view: BookListContract.View? = null
 
@@ -21,12 +27,15 @@ class BookListPresenter @Inject constructor (
         view: BookListContract.View,
     ) {
         this.view = view
-        disposables = CompositeDisposable()
-        observePageUpdate()
+        subscriptions = CompositeDisposable().apply {
+            observePageUpdate()
+            observeInternetConnectionAvailability()
+        }
     }
 
     override fun detachView() {
-        disposables.dispose()
+        subscriptions?.dispose()
+        subscriptions = null
         view = null
     }
 
@@ -36,13 +45,18 @@ class BookListPresenter @Inject constructor (
             .subscribe(pageSubject)
     }
 
-    private fun observePageUpdate() {
-        pageSubject
-            .subscribe { page ->
-                view?.submitPage(page)
-            }.also { disposable ->
-                disposables.add(disposable)
+    private fun CompositeDisposable.observePageUpdate() {
+        pageSubject.subscribe(this) { page ->
+            view?.submitPage(page)
+        }
+    }
+
+    private fun CompositeDisposable.observeInternetConnectionAvailability() {
+        internetConnectionMonitor.subscribe(this) { hasInternet ->
+            if (hasInternet) {
+                view?.retryLoadingIfNecessary()
             }
+        }
     }
 
     companion object {

@@ -34,6 +34,8 @@ class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
 
     private var isCurrentErrorDetailsShown = false
 
+    private var isInNetworkErrorState = false
+
     private var eventBusSubscriptions: CompositeDisposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,6 +77,12 @@ class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
             lifecycle = viewLifecycleOwner.lifecycle,
             pagingData = page
         )
+    }
+
+    override fun retryLoadingIfNecessary() {
+        if (isInNetworkErrorState) {
+            bookListAdapter?.retry()
+        }
     }
 
     private fun FragmentBookListBinding.setupView() {
@@ -120,10 +128,12 @@ class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
                         if (loadStates.refresh is LoadState.Loading) {
                             displayRefreshState()
                         }
+                        isInNetworkErrorState = false
                         isCurrentErrorDetailsShown = false
                     }
                     loadStates.hasError -> {
                         loadStates.error?.let { error ->
+                            isInNetworkErrorState = error is RemoteRequestError.NoConnection
                             displayErrorMessage(error = error)
                         }
                     }

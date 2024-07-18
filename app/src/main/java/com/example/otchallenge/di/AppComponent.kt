@@ -1,6 +1,7 @@
 package com.example.otchallenge.di
 
-import android.app.Application
+import android.content.Context
+import com.example.otchallenge.di.data.MonitorModule
 import com.example.otchallenge.di.data.PagingConfigModule
 import com.example.otchallenge.di.data.PagingSourceFactoryModule
 import com.example.otchallenge.di.data.RemoteModule
@@ -16,6 +17,7 @@ import javax.inject.Singleton
 @Component(
 	modules = [
 		SchedulersModule::class,
+		MonitorModule::class,
 		RemoteModule::class,
 		PagingConfigModule::class,
 		PagingSourceFactoryModule::class,
@@ -33,7 +35,7 @@ interface AppComponent : AndroidInjector<DaggerApplication> {
 	@Component.Builder
 	interface Builder {
 		@BindsInstance
-		fun application(application: Application): Builder
+		fun applicationContext(context: Context): Builder
 		fun build(): AppComponent
 	}
 }
