@@ -1,4 +1,4 @@
-package com.example.otchallenge.presentation
+package com.example.otchallenge.presentation.screens.books.list
 
 import androidx.paging.PagingData
 import androidx.paging.rxjava2.cachedIn
@@ -11,14 +11,14 @@ import javax.inject.Inject
 
 class BookListPresenter @Inject constructor (
     private val bookRepository: BookRepository
-) : HardcoverFictionListContract.Presenter {
+) : BookListContract.Presenter {
 
     private lateinit var disposables: CompositeDisposable
     private val pageSubject = BehaviorSubject.create<PagingData<Book>>()
-    private var view: HardcoverFictionListContract.View? = null
+    private var view: BookListContract.View? = null
 
     override fun attachView(
-        view: HardcoverFictionListContract.View,
+        view: BookListContract.View,
     ) {
         this.view = view
         disposables = CompositeDisposable()
@@ -31,7 +31,7 @@ class BookListPresenter @Inject constructor (
     }
 
     override fun subscribeToList(coroutineScope: CoroutineScope) {
-        bookRepository.getBookList("hardcover-fiction")
+        bookRepository.getBookList(DEFAULT_BOOK_LIST)
             .cachedIn(coroutineScope)
             .subscribe(pageSubject)
     }
@@ -43,6 +43,10 @@ class BookListPresenter @Inject constructor (
             }.also { disposable ->
                 disposables.add(disposable)
             }
+    }
+
+    companion object {
+        private const val DEFAULT_BOOK_LIST = "hardcover-fiction"
     }
 
 }

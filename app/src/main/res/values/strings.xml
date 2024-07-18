@@ -3,8 +3,20 @@
 
     <!-- Common list strings -->
     <string name="common_list_books_loading">Loading books</string>
-    <string name="common_list_books_loading_error_server">Seems like an error occurred in the server. Please try again later.</string>
+    <string name="common_list_books_loading_error_server">Seems like an error occurred in the server. Please try again later or contact technical support.</string>
     <string name="common_list_books_loading_error_network">Seems like there\'s an issue in your internet connection. Please check your connection and try again.</string>
-    <string name="common_list_books_loading_error_retry">Retry</string>
+    <string name="common_list_books_loading_error_timeout">Waiting server response timeout. Please try again later or contact technical support.</string>
+    <string name="common_list_books_loading_error_unknown">An error occurred while fetching books. Please contact technical support.</string>
 
+    <!-- Common dialog titles -->
+    <string name="common_dialog_title_error">Error occurred!</string>
+
+    <!-- Common button labels -->
+    <string name="common_button_label_tryAgainLater">Try later</string>
+    <string name="common_button_label_retry">Retry</string>
+    <string name="common_button_label_details">Details</string>
+
+    <!-- Footer labels -->
+    <string name="footer_label_loadingFailed">Loading more items failed!</string>
+    <string name="footer_label_loadingMore">Loading more...</string>
 </resources>

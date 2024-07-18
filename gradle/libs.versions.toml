@@ -41,6 +41,8 @@ androidx-paging-rxjava = { group = "androidx.paging", name = "paging-rxjava2", v
 androidx-paging-testing = { group = "androidx.paging", name = "paging-testing", version.ref = "paging" }
 dagger = { group = "com.google.dagger", name = "dagger", version.ref = "dagger" }
 dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "dagger" }
+dagger-android = { group = "com.google.dagger", name = "dagger-android-support", version.ref = "dagger" }
+dagger-android-processor = { group = "com.google.dagger", name = "dagger-android-processor", version.ref = "dagger" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-rx-adapter = { group = "com.squareup.retrofit2", name = "adapter-rxjava2", version.ref = "retrofit" }
 retrofit-converter-moshi = { group = "com.squareup.retrofit2", name="converter-moshi", version.ref = "retrofit" }

@@ -1,10 +1,10 @@
-package com.example.otchallenge.presentation
+package com.example.otchallenge.presentation.screens.books.list
 
 import androidx.paging.PagingData
 import com.example.otchallenge.data.entity.Book
 import kotlinx.coroutines.CoroutineScope
 
-interface HardcoverFictionListContract {
+interface BookListContract {
 
     interface View {
         fun submitPage(page: PagingData<Book>)

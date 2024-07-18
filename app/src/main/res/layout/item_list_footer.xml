@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content">
+
+    <include
+        android:id="@+id/lytLoading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/item_list_footer_loading"/>
+
+    <include
+        android:id="@+id/lytLoadingFailed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/item_list_footer_loading_failed"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

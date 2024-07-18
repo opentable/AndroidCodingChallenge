@@ -58,6 +58,8 @@ dependencies {
     // dagger
     implementation libs.dagger
     kapt libs.dagger.compiler
+    implementation libs.dagger.android
+    kapt libs.dagger.android.processor
 
     // retrofit
     implementation libs.retrofit

@@ -6,7 +6,7 @@
     app:startDestination="@id/book_list_fragment">
     <fragment
         android:id="@+id/book_list_fragment"
-        android:name="com.example.otchallenge.presentation.BookListFragment"
+        android:name="com.example.otchallenge.presentation.screens.books.list.BookListFragment"
         android:label="Book List"
         tools:layout="@layout/fragment_book_list">
     </fragment>

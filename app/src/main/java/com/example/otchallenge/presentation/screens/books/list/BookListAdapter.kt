@@ -1,4 +1,4 @@
-package com.example.otchallenge.presentation
+package com.example.otchallenge.presentation.screens.books.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
