@@ -1,10 +1,12 @@
-package com.example.otchallenge
+package com.example.otchallenge.presentation.view
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.otchallenge.MyApplication
+import com.example.otchallenge.R
 
 class MainActivity : AppCompatActivity() {
 
