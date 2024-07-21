@@ -30,11 +30,6 @@ class BookPresenter @Inject constructor(
     }
 
     override fun loadBooks() {
-        if (!connectivityChecker.isNetworkConnected()) {
-            view?.showError("No internet connection")
-            return
-        }
-
         val disposable = getBooksUseCase.execute()
             .subscribeOn(ioScheduler)
             .observeOn(AndroidSchedulers.mainThread())
