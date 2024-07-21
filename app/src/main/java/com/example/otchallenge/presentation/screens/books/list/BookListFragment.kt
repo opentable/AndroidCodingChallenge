@@ -7,19 +7,16 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.otchallenge.R
-import com.example.otchallenge.data.entity.Book
+import com.example.otchallenge.data.model.Book
 import com.example.otchallenge.data.remote.RemoteRequestError
 import com.example.otchallenge.databinding.FragmentBookListBinding
 import com.example.otchallenge.presentation.components.AlertDialogFragment
 import com.example.otchallenge.presentation.components.DaggerRetainedFragment
-import com.example.otchallenge.presentation.extensions.error
 import com.example.otchallenge.presentation.extensions.isEmpty
-import com.example.otchallenge.presentation.extensions.isLoading
-import com.example.otchallenge.presentation.extensions.subscribeToButtonClickEvents
+import com.example.otchallenge.presentation.extensions.subscribeToEvent
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 
@@ -31,10 +28,6 @@ class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
     private var binding: FragmentBookListBinding? = null
 
     private var bookListAdapter: BookListAdapter? = null
-
-    private var isCurrentErrorDetailsShown = false
-
-    private var isInNetworkErrorState = false
 
     private var eventBusSubscriptions: CompositeDisposable? = null
 
@@ -79,10 +72,12 @@ class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
         )
     }
 
-    override fun retryLoadingIfNecessary() {
-        if (isInNetworkErrorState) {
-            bookListAdapter?.retry()
-        }
+    override fun retryLoading() {
+        bookListAdapter?.retry()
+    }
+
+    override fun listItemCount(): Int {
+        return bookListAdapter?.itemCount ?: 0
     }
 
     private fun FragmentBookListBinding.setupView() {
@@ -121,50 +116,38 @@ class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
     }
 
     private fun setupListAdapter(): BookListAdapter {
-        return BookListAdapter().apply {
-            addLoadStateListener { loadStates ->
-                when  {
-                    loadStates.isLoading -> {
-                        if (loadStates.refresh is LoadState.Loading) {
-                            displayRefreshState()
-                        }
-                        isInNetworkErrorState = false
-                        isCurrentErrorDetailsShown = false
-                    }
-                    loadStates.hasError -> {
-                        loadStates.error?.let { error ->
-                            isInNetworkErrorState = error is RemoteRequestError.NoConnection
-                            displayErrorMessage(error = error)
-                        }
-                    }
-                    loadStates.isIdle -> {
-                        displayIdleState()
-                    }
+        return BookListAdapter()
+            .also { adapter ->
+                bookListAdapter = adapter
+            }
+            .also { adapter ->
+                adapter.addLoadStateListener { loadStates ->
+                    presenter.updateListState(
+                        isEmpty = adapter.isEmpty,
+                        loadStates = loadStates
+                    )
                 }
             }
-        }.also {
-            bookListAdapter = it
-        }
     }
 
     private fun CompositeDisposable.listenAlertDialogFragmentEventBus() {
         AlertDialogFragment.eventBus
-            .subscribeToButtonClickEvents(
+            .subscribeToEvent<AlertDialogFragment.Event.ButtonClick>(
                 subscriptions = this,
                 dialogTag = TAG_ERROR_DIALOG
             ) { event ->
                 when (event.buttonType) {
                     AlertDialogFragment.ButtonType.Positive -> {
-                        bookListAdapter?.retry()
+                        retryLoading()
                     }
                     AlertDialogFragment.ButtonType.Negative -> {
-                        event.dialog.dismiss()
+                        dismissErrorDialog()
                     }
                 }
             }
     }
 
-    private fun displayIdleState() {
+    override fun showIdleState() {
         binding?.apply {
             bookList.visibility = View.VISIBLE
             retry.root.visibility = View.GONE
@@ -173,42 +156,31 @@ class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
         }
     }
 
-    private fun displayRefreshState() {
-        bookListAdapter?.let { bookListAdapter ->
-            binding?.let { binding ->
-                if (bookListAdapter.isEmpty) {
-                    binding.bookList.visibility = View.GONE
-                    binding.refreshLayout.isRefreshing = false
-                    binding.loading.root.visibility = View.VISIBLE
-                } else {
-                    binding.bookList.visibility = View.VISIBLE
-                    binding.refreshLayout.isRefreshing = true
-                    binding.loading.root.visibility = View.GONE
-                }
-                binding.retry.root.visibility = View.GONE
-            }
+    override fun showFullScreenRefreshState() {
+        binding?.apply {
+            bookList.visibility = View.GONE
+            refreshLayout.isRefreshing = false
+            loading.root.visibility = View.VISIBLE
+            retry.root.visibility = View.GONE
         }
     }
 
-    private fun displayErrorMessage(error: Throwable?) {
-        when {
-            bookListAdapter?.isEmpty == true -> {
-                showFullScreenErrorMessage(error)
-            }
-            !isCurrentErrorDetailsShown -> {
-                isCurrentErrorDetailsShown = true
-                showErrorDialog(error)
-            }
+    override fun showRefreshIndicator() {
+        binding?.apply {
+            bookList.visibility = View.VISIBLE
+            refreshLayout.isRefreshing = true
+            loading.root.visibility = View.GONE
+            retry.root.visibility = View.GONE
         }
-        binding?.refreshLayout?.isRefreshing = false
     }
 
-    private fun showFullScreenErrorMessage(error: Throwable?) {
+    override fun showFullScreenErrorState(error: Throwable?) {
         binding?.apply {
             bookList.isVisible = false
             loading.root.isVisible = false
             retry.root.isVisible = true
             retry.txtErrorMessage.text = getString(getErrorMessageId(error))
+            refreshLayout.isRefreshing = false
         }
     }
 
@@ -227,15 +199,24 @@ class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
         }
     }
 
-    private fun showErrorDialog(
+    override fun showErrorDialog(
         error: Throwable?
     ) {
+        binding?.refreshLayout?.isRefreshing = false
         AlertDialogFragment {
             titleId = R.string.common_dialog_title_error
             messageId = getErrorMessageId(error)
             positiveButtonTextId = R.string.common_button_label_retry
             negativeButtonTextId = R.string.common_button_label_tryAgainLater
         }.show(childFragmentManager, TAG_ERROR_DIALOG)
+    }
+
+    override fun dismissErrorDialog() {
+        val fragment = childFragmentManager.findFragmentByTag(TAG_ERROR_DIALOG)
+
+        if (fragment is AlertDialogFragment) {
+            fragment.dismiss()
+        }
     }
 
     private fun clearReferences() {

@@ -6,7 +6,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
-import com.example.otchallenge.data.entity.Book
+import com.example.otchallenge.data.model.Book
 import com.example.otchallenge.databinding.ItemBookBinding
 
 class BookListAdapter : PagingDataAdapter<Book, BookListAdapter.ItemViewHolder>(Comparator) {

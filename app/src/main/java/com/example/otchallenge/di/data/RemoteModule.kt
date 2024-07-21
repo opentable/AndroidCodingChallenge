@@ -1,6 +1,8 @@
 package com.example.otchallenge.di.data
 
 import com.example.otchallenge.data.remote.BooksApi
+import com.example.otchallenge.data.remote.converters.MoshiLocalDateConverter
+import com.example.otchallenge.data.remote.converters.MoshiZonedDateTimeConverter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -49,6 +51,8 @@ class RemoteModule {
     @Singleton
     fun provideMoshi(): Moshi {
         return Moshi.Builder()
+            .add(MoshiLocalDateConverter())
+            .add(MoshiZonedDateTimeConverter())
             .add(KotlinJsonAdapterFactory())
             .build()
     }
@@ -72,5 +76,38 @@ class RemoteModule {
         retrofit: Retrofit
     ): BooksApi {
         return retrofit.create(BooksApi::class.java)
+        /*
+        return object : BooksApi {
+            override fun getBookList(
+                name: String,
+                date: String,
+                offset: Int
+            ): BookListResponse {
+                Log.e("offset", "$offset")
+                val results = if (offset < 40) 20 else 15
+                return BookListResponse(
+                        numberOfResults = results,
+                        lastModified = ZonedDateTime.now(),
+                        results = BookListResultResponse(
+                            listName = "hardcover-fiction",
+                            listNameEncoded = "hardcover-fiction",
+                            previousPublishedDate = LocalDate.now(),
+                            normalListEndsAt = 55,
+                            books = List(results) { i ->
+                                BookItemResponse(
+                                    primaryIsbn13 = "${i + offset}",
+                                    title = "book${i + offset}",
+                                    author = "author",
+                                    description = "",
+                                    bookImage = "",
+                                    rank = i + offset
+                                )
+                            }
+                        )
+                    )
+            }
+        }
+
+         */
     }
 }

@@ -2,6 +2,7 @@ package com.example.otchallenge.presentation.components
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
 import androidx.core.content.res.ResourcesCompat.ID_NULL
 import androidx.fragment.app.DialogFragment
@@ -17,8 +18,8 @@ class AlertDialogFragment : DialogFragment() {
             .setButtonIfSet(ARG_POSITIVE_TEXT) { text ->
                 setPositiveButton(text) { _, _ ->
                     _eventBus.onNext(
-                        Event.Click(
-                            dialog = this@AlertDialogFragment,
+                        Event.ButtonClick(
+                            dialogTag = this@AlertDialogFragment.tag,
                             buttonType = ButtonType.Positive
                         )
                     )
@@ -27,14 +28,22 @@ class AlertDialogFragment : DialogFragment() {
             .setButtonIfSet(ARG_NEGATIVE_TEXT) { text ->
                 setNegativeButton(text) { _, _ ->
                     _eventBus.onNext(
-                        Event.Click(
-                            dialog = this@AlertDialogFragment,
+                        Event.ButtonClick(
+                            dialogTag = this@AlertDialogFragment.tag,
                             buttonType = ButtonType.Negative
                         )
                     )
                 }
             }
             .create()
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        _eventBus.onNext(
+            Event.Dismiss(
+                dialogTag = this.tag
+            )
+        )
     }
 
     private fun AlertDialog.Builder.setButtonIfSet(
@@ -92,9 +101,16 @@ class AlertDialogFragment : DialogFragment() {
     }
 
     sealed interface Event {
-        data class Click(
-            val dialog: AlertDialogFragment,
+
+        val dialogTag: String?
+
+        data class ButtonClick(
+            override val dialogTag: String?,
             val buttonType: ButtonType
+        ): Event
+
+        data class Dismiss(
+            override val dialogTag: String?
         ): Event
     }
 

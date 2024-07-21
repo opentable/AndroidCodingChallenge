@@ -4,23 +4,24 @@ import com.example.otchallenge.presentation.components.AlertDialogFragment
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 
-fun Observable<AlertDialogFragment.Event>.subscribeToButtonClickEvents(
+inline fun <reified T: AlertDialogFragment.Event> Observable<AlertDialogFragment.Event>.subscribeToEvent(
     subscriptions: CompositeDisposable,
-    onNext: (AlertDialogFragment.Event.Click) -> Unit
+    crossinline onNext: (T) -> Unit
 ) {
     subscribe(subscriptions) { event ->
-        if (event is AlertDialogFragment.Event.Click) {
+        if (event is T) {
             onNext(event)
         }
     }
 }
-fun Observable<AlertDialogFragment.Event>.subscribeToButtonClickEvents(
+
+inline fun <reified T: AlertDialogFragment.Event> Observable<AlertDialogFragment.Event>.subscribeToEvent(
     subscriptions: CompositeDisposable,
     dialogTag: String,
-    onNext: (AlertDialogFragment.Event.Click) -> Unit
+    crossinline onNext: (T) -> Unit
 ) {
-    subscribeToButtonClickEvents(subscriptions) { event ->
-        if (event.dialog.tag == dialogTag) {
+    subscribeToEvent<T>(subscriptions) { event ->
+        if (event.dialogTag == dialogTag) {
             onNext(event)
         }
     }

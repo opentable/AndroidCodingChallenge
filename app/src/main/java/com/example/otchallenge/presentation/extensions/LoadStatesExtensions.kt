@@ -2,6 +2,7 @@ package com.example.otchallenge.presentation.extensions
 
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
+import androidx.paging.LoadStates
 
 val CombinedLoadStates.error: Throwable?
     get() {
@@ -14,6 +15,13 @@ val CombinedLoadStates.error: Throwable?
     }
 
 val CombinedLoadStates.isLoading: Boolean
+    get() {
+        return refresh is LoadState.Loading ||
+               append  is LoadState.Loading ||
+               prepend is LoadState.Loading
+    }
+
+val LoadStates.isLoading: Boolean
     get() {
         return refresh is LoadState.Loading ||
                append  is LoadState.Loading ||

@@ -36,6 +36,13 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    packagingOptions {
+        resources.excludes.add("META-INF/LICENSE.md")
+        resources.excludes.add("META-INF/LICENSE-notice.md")
+    }
+
+    testOptions { packagingOptions { jniLibs { useLegacyPackaging = true } } }
 }
 
 dependencies {
@@ -80,15 +87,26 @@ dependencies {
     implementation libs.rx.java
     implementation libs.rx.kotlin
 
+    // room
+    kapt libs.room.compiler
+    implementation libs.room.runtime
+    implementation libs.room.rxjava2
+    implementation libs.room.paging
+
     testImplementation libs.junit
     testImplementation libs.mockk
     testImplementation libs.dagger
     testImplementation libs.kotlinx.coroutines.test
     testImplementation libs.kluent
     testImplementation libs.kluent.android
-    //testImplementation libs.kluent.test.junit
     kaptTest libs.dagger.compiler
     testImplementation libs.androidx.paging.testing
+
+    kaptAndroidTest libs.dagger.compiler
+    kaptAndroidTest libs.dagger.android.processor
+    androidTestImplementation libs.mockk.android
+    androidTestImplementation libs.dagger
+    androidTestImplementation libs.kluent.android
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core
 }
