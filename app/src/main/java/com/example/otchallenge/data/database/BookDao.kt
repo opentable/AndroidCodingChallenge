@@ -15,5 +15,5 @@ interface BookDao {
     fun getBookById(bookId: Int): Single<BookEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertBooks(books: List<BookEntity>)
+    fun insertBooks(books: List<BookEntity>): List<Long>
 }

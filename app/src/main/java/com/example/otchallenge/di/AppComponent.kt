@@ -6,6 +6,7 @@ import com.example.otchallenge.data.di.NetworkModule
 import com.example.otchallenge.data.di.RepositoryModule
 import com.example.otchallenge.presentation.view.BookDetailFragment
 import com.example.otchallenge.presentation.view.BookListFragment
+import com.example.otchallenge.presentation.view.SplashFragment
 import dagger.Component
 import javax.inject.Singleton
 
@@ -22,6 +23,12 @@ import javax.inject.Singleton
 )
 interface AppComponent {
     fun inject(application: MyApplication)
+    fun inject(application: SplashFragment)
     fun inject(fragment: BookListFragment)
     fun inject(fragment: BookDetailFragment)
+
+    @Component.Factory
+    interface Factory {
+        fun create(appModule: AppModule): AppComponent
+    }
 }

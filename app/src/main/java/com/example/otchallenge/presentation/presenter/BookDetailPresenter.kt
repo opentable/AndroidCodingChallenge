@@ -1,63 +1,56 @@
 package com.example.otchallenge.presentation.presenter
 
-import com.example.otchallenge.domain.usecase.GetBooksUseCaseContract
+import android.util.Log
+import com.example.otchallenge.domain.usecase.GetBookDetailsUseCaseContract
+import com.example.otchallenge.presentation.view.BookDetailView
 import com.example.otchallenge.presentation.view.BookView
-import com.example.otchallenge.utils.ConnectivityChecker
-import com.example.otchallenge.utils.NetworkException
-import com.example.otchallenge.utils.NoConnectivityException
-import com.example.otchallenge.utils.TimeoutException
+import com.example.otchallenge.utils.*
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import javax.inject.Inject
 import javax.inject.Named
 
-class BookPresenter @Inject constructor(
-    private val getBooksUseCase: GetBooksUseCaseContract,
-    private val connectivityChecker: ConnectivityChecker,
+class BookDetailPresenter @Inject constructor(
+    private val getBookDetailUseCase: GetBookDetailsUseCaseContract,
     private val compositeDisposable: CompositeDisposable,
     @Named("io") private val ioScheduler: Scheduler
-) : BookPresenterContract {
+) : BookDetailPresenterContract {
 
-    private var view: BookView? = null
+    private var view: BookDetailView? = null
 
-    fun attachView(view: BookView) {
-        this.view = view
+    override fun attachView(view: BookView) {
+        this.view = view as BookDetailView
     }
 
-    fun detachView() {
+    override fun detachView() {
         this.view = null
-    }
-
-    override fun loadBooks() {
-        val disposable = getBooksUseCase.execute()
-            .subscribeOn(ioScheduler)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { books ->
-                    view?.showBooks(books)
-                },
-                { error ->
-                    handleError(error)
-                }
-            )
-
-        compositeDisposable.add(disposable)
+        clearDisposables()
     }
 
     override fun loadBookDetails(id: Int) {
-        val disposable = getBooksUseCase.getBookDetails(id)
+        Log.d("BookDetailPresenter", "loadBookDetails called with id: $id")
+        val disposable = getBookDetailUseCase.getBookDetails(id)
             .subscribeOn(ioScheduler)
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { Log.d("BookDetailPresenter", "loadBookDetails: Subscribed") }
+            .doOnSuccess { Log.d("BookDetailPresenter", "loadBookDetails: Success - $it") }
+            .doOnError { Log.e("BookDetailPresenter", "loadBookDetails: Error", it) }
+            .doOnDispose { Log.d("BookDetailPresenter", "loadBookDetails: Disposed") }
             .subscribe(
                 { book ->
+                    Log.d("BookDetailPresenter", "Book details loaded: $book")
                     view?.showBookDetails(book)
                 },
                 { error ->
+                    Log.e("BookDetailPresenter", "Error loading book details", error)
                     handleError(error)
                 }
             )
+
+
         compositeDisposable.add(disposable)
+        Log.d("BookDetailPresenter", "Disposable added to compositeDisposable")
     }
 
     private fun handleError(error: Throwable) {

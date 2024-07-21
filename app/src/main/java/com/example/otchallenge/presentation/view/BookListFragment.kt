@@ -12,15 +12,14 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.otchallenge.MyApplication
 import com.example.otchallenge.R
-import com.example.otchallenge.presentation.model.BookDetailPresentation
 import com.example.otchallenge.presentation.model.BookPresentation
-import com.example.otchallenge.presentation.presenter.BookPresenter
+import com.example.otchallenge.presentation.presenter.BookListPresenter
 import javax.inject.Inject
 
-class BookListFragment : Fragment(), BookView {
+class BookListFragment : Fragment(), BookListView {
 
     @Inject
-    lateinit var presenter: BookPresenter
+    lateinit var presenter: BookListPresenter
 
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var recyclerView: RecyclerView
@@ -43,10 +42,11 @@ class BookListFragment : Fragment(), BookView {
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout)
 
 
-        adapter = BookAdapter { book ->
-            val action =
-                BookListFragmentDirections.actionBookListFragmentToBookDetailFragment(book.id)
-            findNavController().navigate(action)
+        adapter = BookAdapter { bookId ->
+            findNavController().navigate(
+                R.id.action_bookListFragment_to_bookDetailFragment,
+                Bundle().apply { putInt("bookId", bookId) }
+            )
         }
         recyclerView.adapter = adapter
         recyclerView.layoutManager = GridLayoutManager(context, 2)
@@ -61,6 +61,11 @@ class BookListFragment : Fragment(), BookView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         presenter.attachView(this)
+        presenter.loadBooks()
+    }
+
+    override fun onResume() {
+        super.onResume()
         presenter.loadBooks()
     }
 
@@ -83,11 +88,9 @@ class BookListFragment : Fragment(), BookView {
         }
     }
 
-    override fun showBookDetails(book: BookDetailPresentation) {
-        TODO("Not yet implemented")
-    }
-
     override fun showError(error: String) {
-        TODO("Not yet implemented")
+        recyclerView.visibility = View.GONE
+        emptyView.visibility = View.VISIBLE
+        emptyView.text = error
     }
 }
