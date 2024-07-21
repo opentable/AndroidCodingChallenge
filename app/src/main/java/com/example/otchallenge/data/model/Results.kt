@@ -13,6 +13,6 @@ data class Results(
     @SerializedName("display_name") val displayName: String,
     @SerializedName("normal_list_ends_at") val normalListEndsAt: Int,
     val updated: String,
-    val books: List<Book>,
+    val books: List<BookApi>,
     val corrections: List<Correction>?
 )

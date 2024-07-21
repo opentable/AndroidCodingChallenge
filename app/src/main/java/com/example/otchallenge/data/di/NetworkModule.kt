@@ -2,6 +2,7 @@ package com.example.otchallenge.data.di
 
 import com.example.otchallenge.data.api.BooksService
 import com.example.otchallenge.utils.NetworkInterceptor
+import com.example.otchallenge.utils.OffsetInterceptor
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -12,11 +13,22 @@ import javax.inject.Singleton
 
 @Module
 class NetworkModule {
+
     @Provides
     @Singleton
-    fun provideRetrofit(networkInterceptor: NetworkInterceptor): Retrofit {
+    fun provideOffsetInterceptor(): OffsetInterceptor {
+        return OffsetInterceptor()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(
+        networkInterceptor: NetworkInterceptor,
+        offsetInterceptor: OffsetInterceptor
+    ): Retrofit {
         val client = OkHttpClient.Builder()
             .addInterceptor(networkInterceptor)
+            .addInterceptor(offsetInterceptor)
             .build()
 
         return Retrofit.Builder()

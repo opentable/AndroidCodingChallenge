@@ -4,14 +4,16 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.otchallenge.data.model.Book
 import io.reactivex.Single
 
 @Dao
 interface BookDao {
-    @Query("SELECT * FROM books")
-    fun getBooks(): Single<List<Book>>
+    @Query("SELECT id, title, description, bookImage FROM books")
+    fun getBooks(): Single<List<BookSummaryEntity>>
+
+    @Query("SELECT * FROM books WHERE id = :bookId")
+    fun getBookById(bookId: Int): Single<BookEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertBooks(books: List<Book>)
+    fun insertBooks(books: List<BookEntity>)
 }

@@ -2,21 +2,62 @@ package com.example.otchallenge.data.repository
 
 import com.example.otchallenge.data.api.BooksService
 import com.example.otchallenge.data.database.BookDao
-import com.example.otchallenge.data.model.Book
+import com.example.otchallenge.domain.model.Book
+import com.example.otchallenge.domain.model.BookSummary
+import com.example.otchallenge.domain.usecase.BookLoader
+import com.example.otchallenge.utils.BookMapper
 import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class BookRepository @Inject constructor(
     private val bookService: BooksService,
     private val bookDao: BookDao
-) {
-    fun getBooks(apiKey: String): Single<List<Book>> {
-        return bookService.getBooks(apiKey)
-            .map { it.results.books }
-            .doOnSuccess { bookDao.insertBooks(it) }
-            .onErrorResumeNext {
-                bookDao.getBooks().subscribeOn(Schedulers.io())
+) : BookLoader {
+
+    override fun loadBooks(): Single<List<BookSummary>> {
+        return bookService.getBooks()
+            .flatMap { response ->
+                if (response.isSuccessful) {
+                    val books = response.body()?.results?.books?.map { bookApi ->
+                        BookMapper.mapApiToEntity(bookApi)
+                    } ?: emptyList()
+
+                    bookDao.insertBooks(books)
+                    Single.just(books.map { BookMapper.mapEntityToDomainSummary(it) })
+                } else {
+                    Single.error(HttpException(response))
+                }
             }
+            .onErrorResumeNext { throwable ->
+                bookDao.getBooks().map { summaries ->
+                    summaries.map { BookMapper.mapEntitySummaryToDomainSummary(it) }
+                }.onErrorResumeNext { Single.error(throwable) }
+            }
+    }
+    /*return Single.create<List<BookSummary>?> { emitter ->
+        try {
+            val response: Response<OverviewResponse> = bookService.getBooks(apiKey)
+            if (response.isSuccessful) {
+                val books = response.body()?.results?.books?.map { bookApi ->
+                    BookMapper.mapApiToEntity(bookApi)
+                } ?: emptyList()
+                bookDao.insertBooks(books)
+                emitter.onSuccess(books.map { BookMapper.mapEntityToDomainSummary(it) })
+            } else {
+                emitter.onError(HttpException(response))
+            }
+        } catch (e: Exception) {
+            emitter.onError(e)
+        }
+    }.onErrorResumeNext { throwable ->
+        bookDao.getBooks().map { summaries ->
+            summaries.map { BookMapper.mapEntitySummaryToDomainSummary(it) }
+        }.onErrorResumeNext { Single.error(throwable) }
+    }
+}*/
+
+    override fun loadBookDetails(id: Int): Single<Book> {
+        return bookDao.getBookById(id).map { BookMapper.mapEntityToDomain(it) }
     }
 }

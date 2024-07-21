@@ -1,12 +1,8 @@
 package com.example.otchallenge.data.model
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-@Entity(tableName = "books")
-data class Book(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+data class BookApi(
     val rank: Int,
     @SerializedName("rank_last_week") val rankLastWeek: Int,
     @SerializedName("weeks_on_list") val weeksOnList: Int,
@@ -30,5 +26,5 @@ data class Book(
     @SerializedName("first_chapter_link") val firstChapterLink: String,
     @SerializedName("sunday_review_link") val sundayReviewLink: String,
     @SerializedName("article_chapter_link") val articleChapterLink: String,
-    val bookUri: String
+    val bookUri: String? = ""
 )

@@ -26,7 +26,11 @@
         tools:layout="@layout/fragment_book_list">
         <action
             android:id="@+id/action_bookListFragment_to_bookDetailFragment"
-            app:destination="@id/bookDetailFragment" />
+            app:destination="@id/bookDetailFragment">
+            <argument
+                android:name="bookId"
+                app:argType="integer" />
+        </action>
     </fragment>
 
     <fragment
