@@ -1,6 +1,6 @@
 [versions]
 agp = "8.4.2"
-kotlin = "1.9.0"
+kotlin = "1.9.24"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -11,10 +11,12 @@ activity = "1.9.0"
 constraintlayout = "2.1.4"
 dagger = "2.51.1"
 retrofit = "2.11.0"
+moshi-codegen = "1.15.1"
 glide = "4.16.0"
 rx-android = "2.1.1"
 rx-java = "2.2.21"
 rx-kotlin = "2.4.0"
+timber = "5.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -29,10 +31,13 @@ dagger = { group = "com.google.dagger", name = "dagger", version.ref = "dagger" 
 dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "dagger" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-rx-adapter = { group = "com.squareup.retrofit2", name = "adapter-rxjava2", version.ref = "retrofit" }
+retrofit-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "retrofit" }
+moshi-codegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi-codegen" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
-rx-java = {group = "io.reactivex.rxjava2", name="rxjava", version.ref = "rx-java"}
-rx-android = {group = "io.reactivex.rxjava2", name="rxandroid", version.ref = "rx-android"}
-rx-kotlin = {group = "io.reactivex.rxjava2", name="rxkotlin", version.ref = "rx-kotlin"}
+rx-java = { group = "io.reactivex.rxjava2", name="rxjava", version.ref = "rx-java" }
+rx-android = { group = "io.reactivex.rxjava2", name="rxandroid", version.ref = "rx-android" }
+rx-kotlin = { group = "io.reactivex.rxjava2", name="rxkotlin", version.ref = "rx-kotlin" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

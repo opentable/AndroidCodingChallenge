@@ -1,0 +1,48 @@
+# Decisions
+
+## Split by feature
+I'm in favor to split the application by packages representing a feature.
+Reasons:
+- Eases the search of code
+- At one glance you can see the entire architecture and possibly what the application does or
+contains
+- Easier to convert to a multimodule app. For example if you want to share an entire feature with
+ another application.
+
+Then inside of every feature, split it by layers, like data, domain and presentation.
+- Easier to convert to a multimodule app where you want to share repositories, business logic
+required in other parts of the app, etc.
+This can improve development velocity, specially when there are complex API calls that need to be
+mapped. Avoid repetition or explosion of GQL queries doing the same thing, and in general avoid
+repetition.
+- Clear boundaries to know the dependency flow, for example the domain layer doesn't need to
+know about presentation layer.
+
+# With the current information, I'll assume that our application it's for the NY times.
+ Then one of the features is showing all the information related with the NY times books.
+ Then another feature could be showing the news, and so on.
+ That's why I'm creating a 'books' package.
+
+## Meaning of data, domain and presentation
+Data - is from where all your information comes, for example databases, files, SP,
+network requests, etc.
+Domain - Where all your business logic lives, the most important part of your app.
+Shouldn't contain framework dependencies, just pure kotlin/java code.
+The reason of the last statement is to be able to test that layer very quick with unit tests.
+Presentation - Where the views exist. Could be activities, fragments, views or composables.
+Also in this layer you perform logic view operations.
+The control flow is, presentation -> domain -> data, but we will invert the dependecy
+ flow with an interface between domain and data, which will be explained in the next section.
+
+## Creation of BooksRepository interface inside of Domain package
+Since domain package is where all our business logic resides, and it's the most important part
+of the app, everything else should be interchangeable. With this interface we can invert
+dependencies and not depend on data layer. In another words we can change the repository for
+another implementation and the domain layer will remain unchanged.
+Another advantage is that we can inject a fake for testing purposes.
+
+## Usage of Moshi
+To parse json instead of Gson since has been reported better performance and it's 100% in kotlin.
+
+## Use @Json in all response properties
+To avoid parsing errors if the class is obfuscated and the names are changed.
