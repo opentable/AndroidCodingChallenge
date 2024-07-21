@@ -16,9 +16,6 @@ import com.example.otchallenge.data.local.entities.BookListEntryEntity
 import com.example.otchallenge.data.local.entities.BookListRemoteKeyEntity
 import com.example.otchallenge.data.paging.booklist.BookListMediator
 import com.example.otchallenge.data.remote.BooksApi
-import com.example.otchallenge.data.remote.responses.BookItemResponse
-import com.example.otchallenge.data.remote.responses.BookListResponse
-import com.example.otchallenge.data.remote.responses.BookListResultResponse
 import com.example.otchallenge.di.DaggerPagingSourceTestComponent
 import com.example.otchallenge.di.data.PagingConfigModule
 import io.mockk.every
@@ -38,7 +35,6 @@ import org.junit.runners.Parameterized.Parameter
 import org.junit.runners.Parameterized.Parameters
 import java.time.Instant
 import java.time.LocalDate
-import java.time.ZonedDateTime
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -75,7 +71,7 @@ class BookListMediatorLoadSingleTest {
     @Test
     fun insertsRefreshPageSuccessfully() {
 
-        val response = generateResponse(books = 10)
+        val response = generateResponse(listId = LIST_ID, books = 10)
         every { booksApi.getBookList(any(), any(), any()) } returns Single.just(response)
 
         mediator.withOptions(options)
@@ -142,18 +138,20 @@ class BookListMediatorLoadSingleTest {
     fun storesNextPageSuccessfully() {
 
         val date = LocalDate.now()
-        val apiDate = when(val options = this.options) {
+        val apiDate = when(options) {
             is BookListMediator.Options.LoadCurrent -> "current"
             is BookListMediator.Options.LoadDate -> date.toString()
         }
 
         val refreshResponse = generateResponse(
+            listId = LIST_ID,
             books = pagingConfig.pageSize,
             totalCount = 25,
             date = date
         )
 
         val appendResponse = generateResponse(
+            listId = LIST_ID,
             books = 5,
             offset = pagingConfig.pageSize,
             totalCount = 25,
@@ -258,36 +256,6 @@ class BookListMediatorLoadSingleTest {
                 }
             )
         }
-    }
-
-    private fun generateResponse(
-        books: Int = 15,
-        offset: Int = 0,
-        totalCount: Int = books,
-        date: LocalDate = LocalDate.now(),
-        lastModified: ZonedDateTime = ZonedDateTime.now()
-    ): BookListResponse {
-        return BookListResponse(
-            numberOfResults = books,
-            lastModified = lastModified,
-            results = BookListResultResponse(
-                listName = "Test List",
-                listNameEncoded = LIST_ID,
-                previousPublishedDate = date,
-                normalListEndsAt = totalCount,
-                books = List(books) {
-                    val n = offset + it
-                    BookItemResponse(
-                        primaryIsbn13 = "$n",
-                        title = "title$n",
-                        author = "author$n",
-                        description = "desc$n",
-                        bookImage = "image$n",
-                        rank = n
-                    )
-                }
-            )
-        )
     }
 
     companion object {

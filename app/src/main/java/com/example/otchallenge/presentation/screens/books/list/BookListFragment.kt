@@ -132,16 +132,24 @@ class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
 
     private fun CompositeDisposable.listenAlertDialogFragmentEventBus() {
         AlertDialogFragment.eventBus
-            .subscribeToEvent<AlertDialogFragment.Event.ButtonClick>(
+            .subscribeToEvent<AlertDialogFragment.Event>(
                 subscriptions = this,
                 dialogTag = TAG_ERROR_DIALOG
             ) { event ->
-                when (event.buttonType) {
-                    AlertDialogFragment.ButtonType.Positive -> {
-                        retryLoading()
+                when (event) {
+                    is AlertDialogFragment.Event.ButtonClick -> {
+                        when (event.buttonType) {
+                            AlertDialogFragment.ButtonType.Positive -> {
+                                retryLoading()
+                                dismissErrorDialog()
+                            }
+                            AlertDialogFragment.ButtonType.Negative -> {
+                                dismissErrorDialog()
+                            }
+                        }
                     }
-                    AlertDialogFragment.ButtonType.Negative -> {
-                        dismissErrorDialog()
+                    is AlertDialogFragment.Event.Dismiss -> {
+                        presenter.onErrorDialogDismissed()
                     }
                 }
             }

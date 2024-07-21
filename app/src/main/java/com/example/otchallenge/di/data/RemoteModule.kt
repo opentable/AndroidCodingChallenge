@@ -76,38 +76,5 @@ class RemoteModule {
         retrofit: Retrofit
     ): BooksApi {
         return retrofit.create(BooksApi::class.java)
-        /*
-        return object : BooksApi {
-            override fun getBookList(
-                name: String,
-                date: String,
-                offset: Int
-            ): BookListResponse {
-                Log.e("offset", "$offset")
-                val results = if (offset < 40) 20 else 15
-                return BookListResponse(
-                        numberOfResults = results,
-                        lastModified = ZonedDateTime.now(),
-                        results = BookListResultResponse(
-                            listName = "hardcover-fiction",
-                            listNameEncoded = "hardcover-fiction",
-                            previousPublishedDate = LocalDate.now(),
-                            normalListEndsAt = 55,
-                            books = List(results) { i ->
-                                BookItemResponse(
-                                    primaryIsbn13 = "${i + offset}",
-                                    title = "book${i + offset}",
-                                    author = "author",
-                                    description = "",
-                                    bookImage = "",
-                                    rank = i + offset
-                                )
-                            }
-                        )
-                    )
-            }
-        }
-
-         */
     }
 }

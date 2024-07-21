@@ -1,6 +1,5 @@
 package com.example.otchallenge.presentation.screens.books.list
 
-import android.util.Log
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -31,6 +30,7 @@ class BookListPresenter @Inject constructor (
     private val pageSubject = BehaviorSubject.create<PagingData<Book>>()
     private var view: BookListContract.View? = null
 
+    private var lastShownError: Throwable? = null
     private var isCurrentErrorDetailsShown = false
 
     private var isInNetworkErrorState = false
@@ -74,16 +74,22 @@ class BookListPresenter @Inject constructor (
                 isCurrentErrorDetailsShown = false
             }
             loadStates.mediator?.hasError == true -> {
-                Log.e("Hola", "Hola", loadStates.error)
                 loadStates.error?.let { error ->
                     isInNetworkErrorState = error is RemoteRequestError.NoConnection
-                    displayErrorState(isListEmpty = isListEmpty(), error = error)
+                    if (lastShownError != error) {
+                        lastShownError = error
+                        displayErrorState(isListEmpty = isListEmpty(), error = error)
+                    }
                 }
             }
             loadStates.mediator?.isIdle == true -> {
                 view?.showIdleState()
             }
         }
+    }
+
+    override fun onErrorDialogDismissed() {
+        isCurrentErrorDetailsShown = false
     }
 
     private fun isListEmpty(): Boolean {

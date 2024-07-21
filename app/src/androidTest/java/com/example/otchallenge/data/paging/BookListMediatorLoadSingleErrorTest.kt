@@ -25,6 +25,7 @@ import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
 import java.net.SocketTimeoutException
+import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Named
 import kotlin.reflect.KClass
@@ -69,6 +70,50 @@ class BookListMediatorLoadSingleErrorTest {
         val observer = mediator
             .loadSingle(
                 loadType = LoadType.REFRESH,
+                state = PagingState(
+                    pages = emptyList(),
+                    anchorPosition = 0,
+                    config = pagingConfig,
+                    10
+                )
+            ).test()
+
+        observer.assertValueCount(1)
+        observer.values()[0].shouldBeInstanceOf<RemoteMediator.MediatorResult.Error>()
+            .throwable
+            .shouldBeInstanceOf<RemoteRequestError>().apply {
+                cause.shouldBe(error)
+                shouldBeInstanceOf(klass)
+            }
+    }
+
+    @OptIn(ExperimentalPagingApi::class)
+    @Test
+    fun returnsRemoteRequestErrorOnAppendError() {
+
+        val date = LocalDate.now().toString()
+
+        every { booksApi.getBookList(any(), any(), any()) } returns Single.just(generateResponse(listId = "test-list", totalCount = 30))
+        every { booksApi.getBookList(any(), date, any()) } returns Single.error(error)
+
+        mediator.withOptions(BookListMediator.Options.LoadCurrent("test-list"))
+
+        var observer = mediator
+            .loadSingle(
+                loadType = LoadType.REFRESH,
+                state = PagingState(
+                    pages = emptyList(),
+                    anchorPosition = 0,
+                    config = pagingConfig,
+                    10
+                )
+            ).test()
+
+        observer.dispose()
+
+        observer = mediator
+            .loadSingle(
+                loadType = LoadType.APPEND,
                 state = PagingState(
                     pages = emptyList(),
                     anchorPosition = 0,

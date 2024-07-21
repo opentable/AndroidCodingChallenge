@@ -24,6 +24,7 @@ interface BookListContract {
         fun detachView()
         fun subscribeToList(coroutineScope: CoroutineScope)
         fun updateListState(isEmpty: Boolean, loadStates: CombinedLoadStates)
+        fun onErrorDialogDismissed()
     }
 
 }
