@@ -35,27 +35,6 @@ class BookRepository @Inject constructor(
                 }.onErrorResumeNext { Single.error(throwable) }
             }
     }
-    /*return Single.create<List<BookSummary>?> { emitter ->
-        try {
-            val response: Response<OverviewResponse> = bookService.getBooks(apiKey)
-            if (response.isSuccessful) {
-                val books = response.body()?.results?.books?.map { bookApi ->
-                    BookMapper.mapApiToEntity(bookApi)
-                } ?: emptyList()
-                bookDao.insertBooks(books)
-                emitter.onSuccess(books.map { BookMapper.mapEntityToDomainSummary(it) })
-            } else {
-                emitter.onError(HttpException(response))
-            }
-        } catch (e: Exception) {
-            emitter.onError(e)
-        }
-    }.onErrorResumeNext { throwable ->
-        bookDao.getBooks().map { summaries ->
-            summaries.map { BookMapper.mapEntitySummaryToDomainSummary(it) }
-        }.onErrorResumeNext { Single.error(throwable) }
-    }
-}*/
 
     override fun loadBookDetails(id: Int): Single<Book> {
         return bookDao.getBookById(id).map { BookMapper.mapEntityToDomain(it) }
