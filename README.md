@@ -22,3 +22,71 @@ Using this endpoint, show a list of these items, with each row displaying at lea
 
 Bonus Points:
   - Unit tests
+
+---
+
+### Project description
+
+This is an approach to the requested requirement of an application that shows the list of elements (books).
+The general idea is to have an Android application with three screens, a splash screen, a screen with the list of elements and a last screen with the details of each element.
+The app uses a clean architecture with MVP (Model-View-Presenter) design pattern and demonstrates various technologies including Retrofit, Dagger, Room, RxJava, and Navigation Architecture Component.
+
+#### Architecture
+##### Clean Architecture Layers
+1. Presentation Layer
+  - **View (Fragment):** Displays data and handles user interactions.
+  - **Presenter:** Contains the presentation logic and communicates with the Use Cases to fetch data.
+
+2. Domain Layer
+  - **Use Cases:** Encapsulate the application's business logic. Example: GetBooksUseCase, GetBookDetailsUseCase.
+  - **Models:** Business models used within the application logic.
+
+3. Data Layer
+  - **Repositories**: Responsible for fetching data from data sources (API, database) and converting it to domain models.
+  - **Data Sources**: Include API service interfaces and DAOs for database access.
+  - **Mappers**: Convert data models to domain models and vice versa.
+
+##### MVP Design Pattern
+
+1. **Model**: Represents the data and business logic.
+2. **View**: Displays data and routes user commands to the Presenter.
+3. **Presenter**: Retrieves data from the Model, applies presentation logic, and updates the View.
+
+#### Technologies Used
+
+- **Kotlin**: Programming language for Android development.
+- **Retrofit**: For making network requests to the New York Times Books API.
+- **Dagger**: For dependency injection.
+- **Room**: For local database storage.
+- **RxJava**: For handling asynchronous operations.
+- **Glide**: For image loading and caching.
+- **JUnit & Mockito**: For unit testing.
+- **Navigation Architecture Component**: For managing navigation and fragment transitions.
+
+#### Project Structure
+
+├───data  
+│   ├───api  
+│   ├───database  
+│   ├───di  
+│   ├───mapper  
+│   ├───model  
+│   └───repository  
+├───di  
+├───domain  
+│   ├───executor  
+│   ├───mapper  
+│   ├───model  
+│   ├───repository  
+│   └───usecase  
+├───presentation  
+│   ├───model  
+│   ├───presenter  
+│   └───view  
+└───utils  
+ 
+#### Known Issues
+There is an unresolved bug where the loadBookDetails method in BookDetailPresenter does not always reach the subscribe block. This might be related to threading issues or improper disposal of RxJava subscriptions. This bug prevents the detail information from being painted in the book detail fragment.
+Further debugging is required to pinpoint the exact cause and resolve the issue.
+
+
