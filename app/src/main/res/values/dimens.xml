@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="book_cover_width">100dp</dimen>
+    <dimen name="book_cover_height">140dp</dimen>
+    <dimen name="book_title_size">16sp</dimen>
+    <dimen name="book_author_size">14sp</dimen>
+    <dimen name="book_description_size">14sp</dimen>
+</resources>

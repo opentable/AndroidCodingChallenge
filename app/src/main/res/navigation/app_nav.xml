@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/app_nav"
+    app:startDestination="@id/book_list_fragment">
+    <fragment
+        android:id="@+id/book_list_fragment"
+        android:name="com.example.otchallenge.presentation.screens.books.list.BookListFragment"
+        android:label="Book List"
+        tools:layout="@layout/fragment_book_list">
+        <argument
+            android:name="book_list_id"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="date"
+            app:argType="java.time.LocalDate"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+</navigation>
