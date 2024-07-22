@@ -16,7 +16,7 @@
 		android:theme="@style/Theme.AndroidOTChallenge"
 		tools:targetApi="31">
 		<activity
-			android:name=".MainActivity"
+			android:name=".books.presentation.BooksActivity"
 			android:exported="true">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />

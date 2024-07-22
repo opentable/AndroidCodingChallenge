@@ -21,18 +21,18 @@ class BooksFetcher @Inject constructor(
      * lock it to avoid repeated calls.
      */
     @Synchronized
-    fun fetchBooks(offset: Int): Single<Boolean> {
+    fun fetchBooksFromRemote(offset: Int): Single<Boolean> {
         if(!shouldFetchBooks(offset))
             return Single.just(false)
 
-        return booksRepository.fetchBooks(offset).subscribeOn(Schedulers.io())
+        return booksRepository.fetchBooksFromRemote(offset).subscribeOn(Schedulers.io())
             .doOnSuccess { onRemoteSuccess(offset) }
             .onErrorResumeNext(::onRemoteError)
     }
 
     fun retryLastFetch(): Single<Boolean> {
         if (biggestOffset == -1) biggestOffset = 0
-        return booksRepository.fetchBooks(biggestOffset).subscribeOn(Schedulers.io())
+        return booksRepository.fetchBooksFromRemote(biggestOffset).subscribeOn(Schedulers.io())
             .doOnSuccess { onRemoteSuccess(biggestOffset) }
             .onErrorResumeNext(::onRemoteError)
     }

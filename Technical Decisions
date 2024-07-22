@@ -95,3 +95,20 @@ which I found very handy in different projects.
 
 ## Dagger Modules
 Are interfaces to avoid having state on the modules, also is the recommended way by the guidelines.
+
+## BooksUiModel
+This class was created to not leak domain layer objects into the view.
+Domain layer data classes have different responsabilities, therefore different reasons to change.
+
+## BookPresenter and BooksView interfaces
+Those are interfaces to be able to test the presenter without the need of an instrumentation test.
+BooksPresenter should be created to invert dependencies with the view. So now the presenter doesn’t
+know directly about the view, the view can be changed by a fragment or a View instead of an
+activity and the presenter wouldn’t know.
+
+## BooksComponent
+This component represents the dependencies that will be available for the BooksActivity, which in
+turns depends on AppComponent (all component will).
+One of the reasons to have different components is to delimit your dependencies,
+and not leak unnecessary objects in other screens, this is more clear when you have multiple
+fragment inside the same activity.

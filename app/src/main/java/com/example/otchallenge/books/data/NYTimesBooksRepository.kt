@@ -24,7 +24,7 @@ class NYTimesBooksRepository @Inject constructor(
     private val database: Database,
 ): BooksRepository {
 
-    override fun fetchBooks(offset: Int): Single<Boolean> {
+    override fun fetchBooksFromRemote(offset: Int): Single<Boolean> {
         return service.fetchBooks(apiKey, offset).map { response ->
             if(!response.isSuccessful) {
                 Timber.w("fetchAllBooks request was not successful")
