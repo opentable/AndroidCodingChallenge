@@ -88,3 +88,10 @@ It’s an interface to be able to do string management on the domain layer and p
 needing a context.
 Sometimes there are very large and complex string mapping, that kind of logic should be tested,
 with this is interface you can do it using unit tests.
+
+## Inject baseUrl
+This enables changing the baseUrl to provide different environments for QA/Testing purposes,
+which I found very handy in different projects.
+
+## Dagger Modules
+Are interfaces to avoid having state on the modules, also is the recommended way by the guidelines.
