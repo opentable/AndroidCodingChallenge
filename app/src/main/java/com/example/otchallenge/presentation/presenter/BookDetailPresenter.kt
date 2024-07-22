@@ -1,20 +1,22 @@
 package com.example.otchallenge.presentation.presenter
 
-import android.util.Log
+import com.example.otchallenge.domain.executor.PostExecutionThread
+import com.example.otchallenge.domain.executor.ThreadExecutor
 import com.example.otchallenge.domain.usecase.GetBookDetailsUseCaseContract
 import com.example.otchallenge.presentation.view.BookDetailView
 import com.example.otchallenge.presentation.view.BookView
-import com.example.otchallenge.utils.*
-import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
+import com.example.otchallenge.utils.NetworkException
+import com.example.otchallenge.utils.NoConnectivityException
+import com.example.otchallenge.utils.TimeoutException
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
-import javax.inject.Named
 
 class BookDetailPresenter @Inject constructor(
     private val getBookDetailUseCase: GetBookDetailsUseCaseContract,
     private val compositeDisposable: CompositeDisposable,
-    @Named("io") private val ioScheduler: Scheduler
+    private val threadExecutor: ThreadExecutor,
+    private val postExecutionThread: PostExecutionThread
 ) : BookDetailPresenterContract {
 
     private var view: BookDetailView? = null
@@ -29,28 +31,19 @@ class BookDetailPresenter @Inject constructor(
     }
 
     override fun loadBookDetails(id: Int) {
-        Log.d("BookDetailPresenter", "loadBookDetails called with id: $id")
-        val disposable = getBookDetailUseCase.getBookDetails(id)
-            .subscribeOn(ioScheduler)
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { Log.d("BookDetailPresenter", "loadBookDetails: Subscribed") }
-            .doOnSuccess { Log.d("BookDetailPresenter", "loadBookDetails: Success - $it") }
-            .doOnError { Log.e("BookDetailPresenter", "loadBookDetails: Error", it) }
-            .doOnDispose { Log.d("BookDetailPresenter", "loadBookDetails: Disposed") }
-            .subscribe(
-                { book ->
-                    Log.d("BookDetailPresenter", "Book details loaded: $book")
-                    view?.showBookDetails(book)
-                },
-                { error ->
-                    Log.e("BookDetailPresenter", "Error loading book details", error)
-                    handleError(error)
-                }
-            )
-
-
-        compositeDisposable.add(disposable)
-        Log.d("BookDetailPresenter", "Disposable added to compositeDisposable")
+        compositeDisposable.add(
+            getBookDetailUseCase.getBookDetails(id)
+                .subscribeOn(Schedulers.from(threadExecutor))
+                .observeOn(postExecutionThread.getScheduler())
+                .subscribe(
+                    { book ->
+                        view?.showBookDetails(book)
+                    },
+                    { error ->
+                        handleError(error)
+                    }
+                )
+        )
     }
 
     private fun handleError(error: Throwable) {

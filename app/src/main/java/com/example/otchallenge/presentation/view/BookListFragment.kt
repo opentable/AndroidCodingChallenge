@@ -72,7 +72,10 @@ class BookListFragment : Fragment(), BookListView {
     override fun onDestroyView() {
         super.onDestroyView()
         presenter.detachView()
-        presenter.clearDisposables()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
     override fun showBooks(books: List<BookPresentation>) {

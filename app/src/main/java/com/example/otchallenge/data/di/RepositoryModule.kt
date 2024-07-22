@@ -1,9 +1,11 @@
 package com.example.otchallenge.data.di
 
-import com.example.otchallenge.data.repository.BookDetailsRepository
-import com.example.otchallenge.data.repository.BookListRepository
-import com.example.otchallenge.domain.repository.BookDetailsRepositoryContract
-import com.example.otchallenge.domain.repository.BookListRepositoryContract
+import com.example.otchallenge.data.api.BooksService
+import com.example.otchallenge.data.database.BookDao
+import com.example.otchallenge.data.repository.BookDetailsRepositoryImpl
+import com.example.otchallenge.data.repository.BookListRepositoryImpl
+import com.example.otchallenge.domain.repository.BookDetailsRepository
+import com.example.otchallenge.domain.repository.BookListRepository
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -12,13 +14,18 @@ import javax.inject.Singleton
 class RepositoryModule {
     @Provides
     @Singleton
-    fun provideBookListRepository(bookListRepository: BookListRepository): BookListRepositoryContract {
-        return bookListRepository
+    fun provideBookListRepository(
+        bookService: BooksService,
+        bookDao: BookDao
+    ): BookListRepository {
+        return BookListRepositoryImpl(bookService, bookDao)
     }
 
     @Provides
     @Singleton
-    fun provideBookDetailsRepository(bookDetailsRepository: BookDetailsRepository): BookDetailsRepositoryContract {
-        return bookDetailsRepository
+    fun provideBookDetailsRepository(
+        bookDao: BookDao
+    ): BookDetailsRepository {
+        return BookDetailsRepositoryImpl(bookDao)
     }
 }

@@ -1,7 +1,7 @@
 package com.example.otchallenge.domain.model
 
 data class Book(
-    val id: Int = 0,
+    val id: Int? = null,
     val rank: Int,
     val rankLastWeek: Int,
     val weeksOnList: Int,
@@ -18,5 +18,5 @@ data class Book(
     val bookImageHeight: Int,
     val amazonProductUrl: String,
     val ageGroup: String,
-    val bookUri: String
+    val bookUri: String?
 )

@@ -4,6 +4,7 @@ import com.example.otchallenge.data.database.BookEntity
 import com.example.otchallenge.data.database.BookSummaryEntity
 import com.example.otchallenge.domain.model.Book
 import com.example.otchallenge.domain.model.BookSummary
+import com.example.otchallenge.presentation.model.BookDetailPresentation
 
 object MockData {
     fun createMockOverviewResponse(): OverviewResponse {
@@ -126,6 +127,15 @@ object MockData {
         return summaries
     }
 
+    fun getMockSummary(): BookSummary {
+        return BookSummary(
+            id = 1,
+            title = "Title 1",
+            description = "Description of book 1",
+            bookImage = "https://example.com/book1.jpg"
+        )
+    }
+
     fun createMockBook(): Book {
         return Book(
             id = 1,
@@ -146,6 +156,67 @@ object MockData {
             ageGroup = "Age Group 1",
             bookUri = "bookUri1",
             contributor = "Some Contributor"
+        )
+    }
+
+    fun getMockBookEntity(): BookEntity {
+        return BookEntity(
+            id = 1,
+            rank = 1,
+            rankLastWeek = 1,
+            weeksOnList = 10,
+            primaryIsbn10 = "1234567890",
+            primaryIsbn13 = "1234567890123",
+            publisher = "Publisher",
+            description = "Description",
+            price = "20.00",
+            title = "Title",
+            author = "Author",
+            contributor = "Contributor",
+            bookImage = "http://image.url",
+            bookImageWidth = 200,
+            bookImageHeight = 300,
+            amazonProductUrl = "http://amazon.url",
+            ageGroup = "Age Group",
+            bookUri = "http://book.uri"
+        )
+    }
+
+    fun getMockBookDomain(): Book {
+        return Book(
+            id = 1,
+            rank = 1,
+            rankLastWeek = 1,
+            weeksOnList = 10,
+            primaryIsbn10 = "1234567890",
+            primaryIsbn13 = "1234567890123",
+            publisher = "Publisher",
+            description = "Description",
+            price = "20.00",
+            title = "Title",
+            author = "Author",
+            contributor = "Contributor",
+            bookImage = "http://image.url",
+            bookImageWidth = 200,
+            bookImageHeight = 300,
+            amazonProductUrl = "http://amazon.url",
+            ageGroup = "Age Group",
+            bookUri = "http://book.uri"
+        )
+    }
+
+    fun getBookDetailPresentation(): BookDetailPresentation {
+        return BookDetailPresentation(
+            id = 1,
+            title = "Title 1",
+            author = "Author 1",
+            description = "Description 1",
+            bookImage = "ImageURL1",
+            rank = 1,
+            price = "$10.99",
+            bookImageWidth = 128,
+            bookImageHeight = 192,
+            amazonProductUrl = "https://amazon.com/book1"
         )
     }
 }

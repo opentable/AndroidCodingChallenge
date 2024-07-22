@@ -1,21 +1,22 @@
 package com.example.otchallenge.presentation.presenter
 
+import com.example.otchallenge.domain.executor.PostExecutionThread
+import com.example.otchallenge.domain.executor.ThreadExecutor
 import com.example.otchallenge.domain.usecase.GetBooksUseCaseContract
 import com.example.otchallenge.presentation.view.BookListView
 import com.example.otchallenge.presentation.view.BookView
 import com.example.otchallenge.utils.NetworkException
 import com.example.otchallenge.utils.NoConnectivityException
 import com.example.otchallenge.utils.TimeoutException
-import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
-import javax.inject.Named
 
 class BookListPresenter @Inject constructor(
     private val getBooksUseCase: GetBooksUseCaseContract,
     private val compositeDisposable: CompositeDisposable,
-    @Named("io") private val ioScheduler: Scheduler
+    private val threadExecutor: ThreadExecutor,
+    private val postExecutionThread: PostExecutionThread
 ) : BookListPresenterContract {
     private var view: BookListView? = null
 
@@ -29,9 +30,9 @@ class BookListPresenter @Inject constructor(
     }
 
     override fun loadBooks() {
-        val disposable = getBooksUseCase.execute()
-            .subscribeOn(ioScheduler)
-            .observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(getBooksUseCase.getBooks()
+            .subscribeOn(Schedulers.from(threadExecutor))
+            .observeOn(postExecutionThread.getScheduler())
             .subscribe(
                 { books ->
                     view?.showBooks(books)
@@ -39,9 +40,7 @@ class BookListPresenter @Inject constructor(
                 { error ->
                     handleError(error)
                 }
-            )
-
-        compositeDisposable.add(disposable)
+            ))
     }
 
     private fun handleError(error: Throwable) {

@@ -24,10 +24,12 @@ android {
         debug {
             //This information should not be hardcoded. CI\/CD override and manage.
             buildConfigField "String", "NYT_API_KEY", "\"KoRB4K5LRHygfjCL2AH6iQ7NeUqDAGAB\""
+            buildConfigField "String", "NYT_API_URL", "\"https://api.nytimes.com/svc/books/v3/\""
             buildConfigField "String", "OFFSET", "\"0\""
         }
         release {
             buildConfigField "String", "NYT_API_KEY", "\"KoRB4K5LRHygfjCL2AH6iQ7NeUqDAGAB\""
+            buildConfigField "String", "NYT_API_URL", "\"https://api.nytimes.com/svc/books/v3/\""
             buildConfigField "String", "OFFSET", "\"0\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'

@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import io.reactivex.Completable
 import io.reactivex.Single
 
 @Dao
@@ -15,5 +16,5 @@ interface BookDao {
     fun getBookById(bookId: Int): Single<BookEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertBooks(books: List<BookEntity>): List<Long>
+    fun insertBooks(books: List<BookEntity>): Completable
 }

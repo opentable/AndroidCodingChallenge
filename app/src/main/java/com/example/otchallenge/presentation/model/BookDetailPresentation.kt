@@ -1,7 +1,7 @@
 package com.example.otchallenge.presentation.model
 
 data class BookDetailPresentation(
-    val id: Int = 0,
+    val id: Int? = -1,
     val rank: Int,
     val description: String,
     val price: String,
