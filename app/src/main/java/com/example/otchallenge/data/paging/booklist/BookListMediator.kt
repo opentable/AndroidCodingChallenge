@@ -1,6 +1,5 @@
 package com.example.otchallenge.data.paging.booklist
 
-import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -13,7 +12,7 @@ import com.example.otchallenge.data.paging.booklist.mappers.getBookListEntity
 import com.example.otchallenge.data.paging.booklist.mappers.getBookListEntryBookEntities
 import com.example.otchallenge.data.paging.booklist.mappers.getBookListEntryEntity
 import com.example.otchallenge.data.remote.BooksApi
-import com.example.otchallenge.data.remote.NYTApiRules
+import com.example.otchallenge.data.remote.NYTApiConstants
 import com.example.otchallenge.data.remote.mappers.wrappedError
 import com.example.otchallenge.di.SchedulersModule
 import io.reactivex.Scheduler
@@ -62,7 +61,6 @@ class BookListMediatorImpl @Inject constructor(
         loadType: LoadType,
         state: PagingState<Int, BookEntity>
     ): Single<MediatorResult> {
-        Log.e("LoadType", loadType.toString())
         return when(loadType) {
             LoadType.REFRESH -> getRefreshSingle(state)
             // Refreshing always starts from first page
@@ -77,14 +75,14 @@ class BookListMediatorImpl @Inject constructor(
     ): Single<MediatorResult> {
         return Single.fromCallable {
             when (val options = this.options) {
-                is Options.LoadCurrent -> NYTApiRules.CurrentDate
+                is Options.LoadCurrent -> NYTApiConstants.BookList.CurrentDate
                 is Options.LoadDate -> options.date.toString()
             }
         }.flatMap { date ->
             booksApi.getBookList(
                 name = options.bookListId,
                 date = date,
-                offset = NYTApiRules.BookList.StartOffset
+                offset = NYTApiConstants.BookList.StartOffset
             )
         }.flatMap { response ->
             bookListPaginationDao.upsertListEntry(

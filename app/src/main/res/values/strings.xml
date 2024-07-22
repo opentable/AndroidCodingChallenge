@@ -25,6 +25,7 @@
     <string name="footer_label_loadingMore">Loading more...</string>
 
     <!-- Other labels -->
+    <string name="default_bookList_name">Hardcover Fiction</string>
     <string name="label_current">Current</string>
     <string name="date_format">MMM dd, yyyy</string>
 </resources>

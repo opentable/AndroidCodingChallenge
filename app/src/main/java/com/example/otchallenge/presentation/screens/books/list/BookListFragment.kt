@@ -8,6 +8,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,6 +33,8 @@ class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
     @Inject
     lateinit var presenter: BookListContract.Presenter
 
+    private val args by navArgs<BookListFragmentArgs>()
+
     private var binding: FragmentBookListBinding? = null
 
     private var bookListAdapter: BookListAdapter? = null
@@ -40,7 +43,11 @@ class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter.subscribeToList(lifecycleScope)
+        presenter.subscribeToList(
+            coroutineScope = lifecycleScope,
+            bookListId = args.bookListId,
+            date = args.date
+        )
     }
 
     override fun onCreateView(
@@ -72,7 +79,7 @@ class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
         clearReferences()
     }
 
-    override fun submitPage(page: PagingData<Book>) {
+    override fun submitPagingData(page: PagingData<Book>) {
         bookListAdapter?.submitData(
             lifecycle = viewLifecycleOwner.lifecycle,
             pagingData = page
@@ -83,19 +90,18 @@ class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
         bookListAdapter?.retry()
     }
 
-    override fun listItemCount(): Int {
-        return bookListAdapter?.itemCount ?: 0
-    }
-
-    override fun setActionBar() {
+    override fun setActionBar(listType: BookListContract.ListType) {
         (requireActivity() as AppCompatActivity).supportActionBar?.apply {
-            title = presenter.listName
-            subtitle = if (!presenter.isDateToday) {
-                getString(R.string.label_current)
-            } else {
-                presenter.date.format(
-                    DateTimeFormatter.ofPattern(getString(R.string.date_format))
-                )
+            title = listType.bookList.name
+            subtitle = when (listType) {
+                is BookListContract.ListType.Current -> {
+                    getString(R.string.label_current)
+                }
+                is BookListContract.ListType.Date -> {
+                    listType.date.format(
+                        DateTimeFormatter.ofPattern(getString(R.string.date_format))
+                    )
+                }
             }
         }
     }
@@ -107,18 +113,18 @@ class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
     }
 
     private fun FragmentBookListBinding.setUpViewsVisibility() {
-        loading.root.visibility = View.GONE
-        retry.root.visibility = View.GONE
-        retry.btnRetry.setOnClickListener {
+        lytLoading.root.visibility = View.GONE
+        lytRetry.root.visibility = View.GONE
+        lytRetry.btnRetry.setOnClickListener {
             bookListAdapter?.retry()
         }
-        refreshLayout.setOnRefreshListener {
+        lytRefresh.setOnRefreshListener {
             bookListAdapter?.refresh()
         }
     }
 
     private fun FragmentBookListBinding.setUpList() {
-        bookList.apply {
+        rvBookList.apply {
             layoutManager = setupLayoutManager()
             addItemDecoration(
                 MarginItemDecoration(
@@ -196,38 +202,38 @@ class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
 
     override fun showIdleState() {
         binding?.apply {
-            bookList.visibility = View.VISIBLE
-            retry.root.visibility = View.GONE
-            refreshLayout.isRefreshing = false
-            loading.root.visibility = View.GONE
+            rvBookList.visibility = View.VISIBLE
+            lytRetry.root.visibility = View.GONE
+            lytRefresh.isRefreshing = false
+            lytLoading.root.visibility = View.GONE
         }
     }
 
     override fun showFullScreenRefreshState() {
         binding?.apply {
-            bookList.visibility = View.GONE
-            refreshLayout.isRefreshing = false
-            loading.root.visibility = View.VISIBLE
-            retry.root.visibility = View.GONE
+            rvBookList.visibility = View.GONE
+            lytRefresh.isRefreshing = false
+            lytLoading.root.visibility = View.VISIBLE
+            lytRetry.root.visibility = View.GONE
         }
     }
 
     override fun showRefreshIndicator() {
         binding?.apply {
-            bookList.visibility = View.VISIBLE
-            refreshLayout.isRefreshing = true
-            loading.root.visibility = View.GONE
-            retry.root.visibility = View.GONE
+            rvBookList.visibility = View.VISIBLE
+            lytRefresh.isRefreshing = true
+            lytLoading.root.visibility = View.GONE
+            lytRetry.root.visibility = View.GONE
         }
     }
 
     override fun showFullScreenErrorState(error: Throwable?) {
         binding?.apply {
-            bookList.isVisible = false
-            loading.root.isVisible = false
-            retry.root.isVisible = true
-            retry.txtErrorMessage.text = getString(getErrorMessageId(error))
-            refreshLayout.isRefreshing = false
+            rvBookList.isVisible = false
+            lytLoading.root.isVisible = false
+            lytRetry.root.isVisible = true
+            lytRetry.txtErrorMessage.text = getString(getErrorMessageId(error))
+            lytRefresh.isRefreshing = false
         }
     }
 
@@ -249,7 +255,7 @@ class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
     override fun showErrorDialog(
         error: Throwable?
     ) {
-        binding?.refreshLayout?.isRefreshing = false
+        binding?.lytRefresh?.isRefreshing = false
         AlertDialogFragment {
             titleId = R.string.common_dialog_title_error
             messageId = getErrorMessageId(error)

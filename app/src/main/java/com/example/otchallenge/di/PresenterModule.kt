@@ -9,7 +9,7 @@ import dagger.Module
 abstract class PresenterModule {
 
     @Binds
-    abstract fun provideHardcoverFictionListPresenter(
+    abstract fun bindBookListPresenter(
         impl: BookListPresenter
     ): BookListContract.Presenter
 

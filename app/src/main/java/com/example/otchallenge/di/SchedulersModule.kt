@@ -17,13 +17,13 @@ class SchedulersModule {
     }
 
     @Provides
-    @Named(Main)
+    @Named(MAIN)
     fun providesMainScheduler(): Scheduler {
         return AndroidSchedulers.mainThread()
     }
 
     companion object {
         const val IO = "Schedulers-IO"
-        const val Main = "Schedulers-Main"
+        const val MAIN = "Schedulers-Main"
     }
 }

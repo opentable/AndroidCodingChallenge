@@ -9,7 +9,7 @@ import dagger.Module
 abstract class RepositoryModule {
 
     @Binds
-    abstract fun provideBookRepository(
+    abstract fun bindBookRepository(
         impl: BookRepositoryImpl
     ): BookRepository
 

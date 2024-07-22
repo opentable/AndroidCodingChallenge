@@ -7,25 +7,25 @@
     tools:context=".presentation.screens.books.list.BookListFragment">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/refresh_layout"
+        android:id="@+id/lytRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/book_list"
+            android:id="@+id/rvBookList"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <include
-        android:id="@+id/loading"
+        android:id="@+id/lytLoading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         layout="@layout/item_list_loading" />
 
     <include
-        android:id="@+id/retry"
+        android:id="@+id/lytRetry"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         layout="@layout/item_list_retry" />

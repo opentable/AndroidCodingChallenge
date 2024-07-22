@@ -75,7 +75,7 @@ class MarginItemDecoration(
         }
     }
 
-    fun Int.dp(context: Context): Int {
+    private fun Int.dp(context: Context): Int {
         return this * context.resources.displayMetrics.density.roundToInt()
     }
 }

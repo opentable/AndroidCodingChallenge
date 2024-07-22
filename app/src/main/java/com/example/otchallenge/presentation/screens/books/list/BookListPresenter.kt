@@ -5,7 +5,6 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.rxjava2.cachedIn
 import com.example.otchallenge.data.model.Book
-import com.example.otchallenge.data.paging.booklist.BookListMediator
 import com.example.otchallenge.data.remote.RemoteRequestError
 import com.example.otchallenge.data.repository.BookRepository
 import com.example.otchallenge.di.data.MonitorModule
@@ -29,6 +28,7 @@ class BookListPresenter @Inject constructor (
 
     private var subscriptions: CompositeDisposable? = null
     private val pageSubject = BehaviorSubject.create<PagingData<Book>>()
+    private val listTypeSubject = BehaviorSubject.create<BookListContract.ListType>()
     private var view: BookListContract.View? = null
 
     private var lastShownError: Throwable? = null
@@ -36,20 +36,17 @@ class BookListPresenter @Inject constructor (
 
     private var isInNetworkErrorState = false
 
-    override fun attachView(
-        view: BookListContract.View,
-    ) {
+    override fun attachView(view: BookListContract.View) {
         this.view = view
 
-        view.setActionBar()
-
         subscriptions = CompositeDisposable().apply {
+            observeBookListUpdate()
             observePageUpdate()
             observeInternetConnectionAvailability()
         }
 
         pageSubject.value?.let {
-            view.submitPage(it)
+            view.submitPagingData(it)
         }
     }
 
@@ -59,21 +56,28 @@ class BookListPresenter @Inject constructor (
         view = null
     }
 
-    override val listName: String
-        get() = "Hardcover Fiction"
-
-    override val isDateToday: Boolean
-        get() = true
-
-    override val date: LocalDate
-        get() = LocalDate.now()
-
     @OptIn(ExperimentalCoroutinesApi::class)
-    override fun subscribeToList(coroutineScope: CoroutineScope) {
-        bookRepository.getBookList(
-            BookListMediator.Options.LoadCurrent(DEFAULT_BOOK_LIST)
-        )
-            .cachedIn(coroutineScope)
+    override fun subscribeToList(
+        coroutineScope: CoroutineScope,
+        bookListId: String?,
+        date: LocalDate?
+    ) {
+        bookRepository.getBookList(bookListId)
+            .doOnSuccess { item ->
+                listTypeSubject.onNext(
+                    if (date == null) {
+                        BookListContract.ListType.Current(item)
+                    } else {
+                        BookListContract.ListType.Date(item, date)
+                    }
+                )
+            }
+            .flatMapObservable {
+                bookRepository.getBookListPages(
+                    bookListId = it.id,
+                    date = date
+                ).cachedIn(coroutineScope)
+            }
             .subscribe(pageSubject)
     }
 
@@ -81,7 +85,7 @@ class BookListPresenter @Inject constructor (
         when  {
             loadStates.mediator?.isLoading == true -> {
                 if (loadStates.refresh is LoadState.Loading) {
-                    displayRefreshState(isListEmpty = isListEmpty())
+                    displayRefreshState(isListEmpty = isEmpty)
                 }
                 isInNetworkErrorState = false
                 isCurrentErrorDetailsShown = false
@@ -91,7 +95,7 @@ class BookListPresenter @Inject constructor (
                     isInNetworkErrorState = error is RemoteRequestError.NoConnection
                     if (lastShownError != error) {
                         lastShownError = error
-                        displayErrorState(isListEmpty = isListEmpty(), error = error)
+                        displayErrorState(isListEmpty = isEmpty, error = error)
                     }
                 }
             }
@@ -103,10 +107,6 @@ class BookListPresenter @Inject constructor (
 
     override fun onErrorDialogDismissed() {
         isCurrentErrorDetailsShown = false
-    }
-
-    private fun isListEmpty(): Boolean {
-        return (view?.listItemCount() ?: 0) == 0
     }
 
     private fun displayRefreshState(isListEmpty: Boolean) {
@@ -131,7 +131,13 @@ class BookListPresenter @Inject constructor (
 
     private fun CompositeDisposable.observePageUpdate() {
         pageSubject.subscribe(this) { page ->
-            view?.submitPage(page)
+            view?.submitPagingData(page)
+        }
+    }
+
+    private fun CompositeDisposable.observeBookListUpdate() {
+        listTypeSubject.subscribe(this) { type ->
+            view?.setActionBar(type)
         }
     }
 
@@ -145,9 +151,4 @@ class BookListPresenter @Inject constructor (
             }
         }
     }
-
-    companion object {
-        private const val DEFAULT_BOOK_LIST = "hardcover-fiction"
-    }
-
 }

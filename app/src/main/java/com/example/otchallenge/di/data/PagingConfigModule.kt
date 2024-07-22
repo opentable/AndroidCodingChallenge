@@ -1,7 +1,7 @@
 package com.example.otchallenge.di.data
 
 import androidx.paging.PagingConfig
-import com.example.otchallenge.data.remote.NYTApiRules
+import com.example.otchallenge.data.remote.NYTApiConstants
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -13,9 +13,9 @@ class PagingConfigModule {
     @Named(BookList)
     fun provideBookListPagingConfig(): PagingConfig {
         return PagingConfig(
-            pageSize = NYTApiRules.BookList.PageSize,
-            prefetchDistance = NYTApiRules.BookList.PageSize / 4,
-            initialLoadSize = NYTApiRules.BookList.PageSize
+            pageSize = NYTApiConstants.BookList.PageSize,
+            prefetchDistance = NYTApiConstants.BookList.PageSize / 4,
+            initialLoadSize = NYTApiConstants.BookList.PageSize
         )
     }
 

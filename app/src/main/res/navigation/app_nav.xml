@@ -9,5 +9,15 @@
         android:name="com.example.otchallenge.presentation.screens.books.list.BookListFragment"
         android:label="Book List"
         tools:layout="@layout/fragment_book_list">
+        <argument
+            android:name="book_list_id"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="date"
+            app:argType="java.time.LocalDate"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
 </navigation>

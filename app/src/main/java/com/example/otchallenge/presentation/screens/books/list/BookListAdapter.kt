@@ -56,13 +56,13 @@ class BookListAdapter : PagingDataAdapter<Book, BookListAdapter.ItemViewHolder>(
             }
 
         private fun updateView(book: Book?) {
-            binding.bookTitle.text = book?.title
-            binding.bookAuthor.text = book?.author
-            binding.bookDescription.text = book?.description
+            binding.txtBookTitle.text = book?.title
+            binding.txtBookAuthor.text = book?.author
+            binding.txtBookDescription.text = book?.description
 
-            binding.bookCover.isVisible = false
-            binding.bookCoverLoading.root.isVisible = true
-            binding.bookCoverLoadFailed.root.isVisible = false
+            binding.imgBookCover.isVisible = false
+            binding.lytBookCoverLoading.root.isVisible = true
+            binding.lytBookCoverLoadFailed.root.isVisible = false
 
             Glide.with(itemView.context)
                 .load(book?.imageUrl)
@@ -73,9 +73,9 @@ class BookListAdapter : PagingDataAdapter<Book, BookListAdapter.ItemViewHolder>(
                         target: Target<Drawable>,
                         isFirstResource: Boolean
                     ): Boolean {
-                        binding.bookCover.isVisible = false
-                        binding.bookCoverLoading.root.isVisible = false
-                        binding.bookCoverLoadFailed.root.isVisible = true
+                        binding.imgBookCover.isVisible = false
+                        binding.lytBookCoverLoading.root.isVisible = false
+                        binding.lytBookCoverLoadFailed.root.isVisible = true
                         return false
                     }
 
@@ -86,13 +86,13 @@ class BookListAdapter : PagingDataAdapter<Book, BookListAdapter.ItemViewHolder>(
                         dataSource: DataSource,
                         isFirstResource: Boolean
                     ): Boolean {
-                        binding.bookCover.isVisible = true
-                        binding.bookCoverLoading.root.isVisible = false
-                        binding.bookCoverLoadFailed.root.isVisible = false
+                        binding.imgBookCover.isVisible = true
+                        binding.lytBookCoverLoading.root.isVisible = false
+                        binding.lytBookCoverLoadFailed.root.isVisible = false
                         return false
                     }
                 })
-                .into(binding.bookCover)
+                .into(binding.imgBookCover)
         }
     }
 }

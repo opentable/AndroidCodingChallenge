@@ -3,16 +3,16 @@ package com.example.otchallenge.presentation.screens.books.list
 import androidx.paging.CombinedLoadStates
 import androidx.paging.PagingData
 import com.example.otchallenge.data.model.Book
+import com.example.otchallenge.data.model.BookList
 import kotlinx.coroutines.CoroutineScope
 import java.time.LocalDate
 
 interface BookListContract {
 
     interface View {
-        fun setActionBar()
-        fun submitPage(page: PagingData<Book>)
+        fun setActionBar(listType: ListType)
+        fun submitPagingData(page: PagingData<Book>)
         fun retryLoading()
-        fun listItemCount(): Int
         fun showIdleState()
         fun showFullScreenRefreshState()
         fun showRefreshIndicator()
@@ -22,14 +22,20 @@ interface BookListContract {
     }
 
     interface Presenter {
-        val listName: String
-        val date: LocalDate
-        val isDateToday: Boolean
         fun attachView(view: View)
         fun detachView()
-        fun subscribeToList(coroutineScope: CoroutineScope)
+        fun subscribeToList(
+            coroutineScope: CoroutineScope,
+            bookListId: String?,
+            date: LocalDate?
+        )
         fun updateListState(isEmpty: Boolean, loadStates: CombinedLoadStates)
         fun onErrorDialogDismissed()
     }
 
+    sealed interface ListType {
+        val bookList: BookList
+        data class Current(override val bookList: BookList): ListType
+        data class Date(override val bookList: BookList, val date: LocalDate): ListType
+    }
 }

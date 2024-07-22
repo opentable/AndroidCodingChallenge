@@ -1,6 +1,7 @@
 package com.example.otchallenge.di.data
 
 import com.example.otchallenge.data.remote.BooksApi
+import com.example.otchallenge.data.remote.NYTApiConstants
 import com.example.otchallenge.data.remote.converters.MoshiLocalDateConverter
 import com.example.otchallenge.data.remote.converters.MoshiZonedDateTimeConverter
 import com.squareup.moshi.Moshi
@@ -38,8 +39,8 @@ class RemoteModule {
         return addInterceptor { chain ->
             chain.request().url.newBuilder().run {
                 addQueryParameter(
-                    name = "api-key",
-                    value = "KoRB4K5LRHygfjCL2AH6iQ7NeUqDAGAB"
+                    name = NYTApiConstants.ApiKey.first,
+                    value = NYTApiConstants.ApiKey.second
                 )
             }.build().let { url ->
                 chain.proceed(chain.request().newBuilder().url(url).build())
@@ -64,7 +65,7 @@ class RemoteModule {
         moshi: Moshi
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://api.nytimes.com")
+            .baseUrl(NYTApiConstants.BaseUrl)
             .client(client)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(MoshiConverterFactory.create(moshi))
