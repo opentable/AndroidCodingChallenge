@@ -26,6 +26,7 @@ import com.example.otchallenge.presentation.extensions.isEmpty
 import com.example.otchallenge.presentation.extensions.subscribeToEvent
 import io.reactivex.disposables.CompositeDisposable
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 import javax.inject.Inject
 
 class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
@@ -99,7 +100,7 @@ class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
                 }
                 is BookListContract.ListType.Date -> {
                     listType.date.format(
-                        DateTimeFormatter.ofPattern(getString(R.string.date_format))
+                        DateTimeFormatter.ofPattern(getString(R.string.date_format), Locale.getDefault())
                     )
                 }
             }
