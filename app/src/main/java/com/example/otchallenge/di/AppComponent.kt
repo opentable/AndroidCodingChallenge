@@ -6,6 +6,8 @@ import com.example.otchallenge.data.di.NetworkModule
 import com.example.otchallenge.data.di.RepositoryModule
 import com.example.otchallenge.presentation.view.BookDetailFragment
 import com.example.otchallenge.presentation.view.BookListFragment
+import com.example.otchallenge.presentation.view.MainActivity
+import com.example.otchallenge.presentation.view.SplashFragment
 import dagger.Component
 import javax.inject.Singleton
 
@@ -17,11 +19,18 @@ import javax.inject.Singleton
         DatabaseModule::class,
         RepositoryModule::class,
         PresenterModule::class,
-        UseCaseModule::class,
+        UseCaseModule::class
     ]
 )
 interface AppComponent {
     fun inject(application: MyApplication)
+    fun inject(fragment: SplashFragment)
     fun inject(fragment: BookListFragment)
     fun inject(fragment: BookDetailFragment)
+    fun inject(activity: MainActivity)
+
+    @Component.Factory
+    interface Factory {
+        fun create(appModule: AppModule): AppComponent
+    }
 }

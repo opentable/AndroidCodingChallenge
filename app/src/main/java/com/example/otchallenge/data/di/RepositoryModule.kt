@@ -2,8 +2,10 @@ package com.example.otchallenge.data.di
 
 import com.example.otchallenge.data.api.BooksService
 import com.example.otchallenge.data.database.BookDao
-import com.example.otchallenge.data.repository.BookRepository
-import com.example.otchallenge.domain.usecase.BookLoader
+import com.example.otchallenge.data.repository.BookDetailsRepositoryImpl
+import com.example.otchallenge.data.repository.BookListRepositoryImpl
+import com.example.otchallenge.domain.repository.BookDetailsRepository
+import com.example.otchallenge.domain.repository.BookListRepository
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -12,10 +14,18 @@ import javax.inject.Singleton
 class RepositoryModule {
     @Provides
     @Singleton
-    fun provideBookRepository(
+    fun provideBookListRepository(
         bookService: BooksService,
         bookDao: BookDao
-    ): BookLoader {
-        return BookRepository(bookService, bookDao)
+    ): BookListRepository {
+        return BookListRepositoryImpl(bookService, bookDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideBookDetailsRepository(
+        bookDao: BookDao
+    ): BookDetailsRepository {
+        return BookDetailsRepositoryImpl(bookDao)
     }
 }

@@ -1,38 +1,38 @@
 package com.example.otchallenge.presentation.presenter
 
+import com.example.otchallenge.domain.executor.PostExecutionThread
+import com.example.otchallenge.domain.executor.ThreadExecutor
 import com.example.otchallenge.domain.usecase.GetBooksUseCaseContract
+import com.example.otchallenge.presentation.view.BookListView
 import com.example.otchallenge.presentation.view.BookView
-import com.example.otchallenge.utils.ConnectivityChecker
 import com.example.otchallenge.utils.NetworkException
 import com.example.otchallenge.utils.NoConnectivityException
 import com.example.otchallenge.utils.TimeoutException
-import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
-import javax.inject.Named
 
-class BookPresenter @Inject constructor(
+class BookListPresenter @Inject constructor(
     private val getBooksUseCase: GetBooksUseCaseContract,
-    private val connectivityChecker: ConnectivityChecker,
     private val compositeDisposable: CompositeDisposable,
-    @Named("io") private val ioScheduler: Scheduler
-) : BookPresenterContract {
+    private val threadExecutor: ThreadExecutor,
+    private val postExecutionThread: PostExecutionThread
+) : BookListPresenterContract {
+    private var view: BookListView? = null
 
-    private var view: BookView? = null
-
-    fun attachView(view: BookView) {
-        this.view = view
+    override fun attachView(view: BookView) {
+        this.view = view as BookListView
     }
 
-    fun detachView() {
+    override fun detachView() {
         this.view = null
+        clearDisposables()
     }
 
     override fun loadBooks() {
-        val disposable = getBooksUseCase.execute()
-            .subscribeOn(ioScheduler)
-            .observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(getBooksUseCase.getBooks()
+            .subscribeOn(Schedulers.from(threadExecutor))
+            .observeOn(postExecutionThread.getScheduler())
             .subscribe(
                 { books ->
                     view?.showBooks(books)
@@ -40,24 +40,7 @@ class BookPresenter @Inject constructor(
                 { error ->
                     handleError(error)
                 }
-            )
-
-        compositeDisposable.add(disposable)
-    }
-
-    override fun loadBookDetails(id: Int) {
-        val disposable = getBooksUseCase.getBookDetails(id)
-            .subscribeOn(ioScheduler)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { book ->
-                    view?.showBookDetails(book)
-                },
-                { error ->
-                    handleError(error)
-                }
-            )
-        compositeDisposable.add(disposable)
+            ))
     }
 
     private fun handleError(error: Throwable) {

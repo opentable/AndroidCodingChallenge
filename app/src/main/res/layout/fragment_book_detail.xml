@@ -16,7 +16,7 @@
             android:id="@+id/book_image"
             android:layout_width="200dp"
             android:layout_height="300dp"
-            android:scaleType="centerCrop" />
+            android:scaleType="fitCenter" />
 
         <TextView
             android:id="@+id/book_title"

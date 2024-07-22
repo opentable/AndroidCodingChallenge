@@ -37,5 +37,9 @@
         android:id="@+id/bookDetailFragment"
         android:name="com.example.otchallenge.presentation.view.BookDetailFragment"
         android:label="Book Detail Fragment"
-        tools:layout="@layout/fragment_book_detail" />
+        tools:layout="@layout/fragment_book_detail">
+        <argument
+            android:name="bookId"
+            app:argType="integer" />
+    </fragment>
 </navigation>

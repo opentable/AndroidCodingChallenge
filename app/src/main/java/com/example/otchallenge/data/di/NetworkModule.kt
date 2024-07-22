@@ -1,5 +1,6 @@
 package com.example.otchallenge.data.di
 
+import com.example.otchallenge.BuildConfig
 import com.example.otchallenge.data.api.BooksService
 import com.example.otchallenge.utils.NetworkInterceptor
 import com.example.otchallenge.utils.OffsetInterceptor
@@ -32,7 +33,7 @@ class NetworkModule {
             .build()
 
         return Retrofit.Builder()
-            .baseUrl("https://api.nytimes.com/svc/books/v3/")
+            .baseUrl(BuildConfig.NYT_API_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())

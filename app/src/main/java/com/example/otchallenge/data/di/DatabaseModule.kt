@@ -10,6 +10,7 @@ import javax.inject.Singleton
 
 @Module
 class DatabaseModule {
+
     @Provides
     @Singleton
     fun provideDatabase(application: Application): BookDatabase {

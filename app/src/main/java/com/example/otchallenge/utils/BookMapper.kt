@@ -9,6 +9,29 @@ import com.example.otchallenge.presentation.model.BookDetailPresentation
 import com.example.otchallenge.presentation.model.BookPresentation
 
 object BookMapper {
+
+    fun mapApiToDomain(apiModel: BookApi): Book {
+        return Book(
+            rank = apiModel.rank,
+            rankLastWeek = apiModel.rankLastWeek,
+            weeksOnList = apiModel.weeksOnList,
+            primaryIsbn10 = apiModel.primaryIsbn10,
+            primaryIsbn13 = apiModel.primaryIsbn13,
+            publisher = apiModel.publisher,
+            description = apiModel.description,
+            price = apiModel.price,
+            title = apiModel.title,
+            author = apiModel.author,
+            contributor = apiModel.contributor,
+            bookImage = apiModel.bookImage,
+            bookImageWidth = apiModel.bookImageWidth,
+            bookImageHeight = apiModel.bookImageHeight,
+            amazonProductUrl = apiModel.amazonProductUrl,
+            ageGroup = apiModel.ageGroup,
+            bookUri = apiModel.bookUri
+        )
+    }
+
     fun mapApiToEntity(apiModel: BookApi): BookEntity {
         return BookEntity(
             title = apiModel.title,
