@@ -65,3 +65,26 @@ On the same point it's also nice that it generate models from your SQL queries a
 Another good point it's that SQLDelight is a kotlin multiplatform library (I think room can
 be used on KMP too :P).
 I have experience with Room tho.
+
+## Books Fetcher
+Interactor or Use case class that handles the business logic related with fetching the books.
+You can use this class whenever you want to fetch books and will return a domain/BooksData class,
+not a specific presentation class.
+I like to name things based on what they do, but I always adapt on what the project does, for
+example google recommends using UseCase suffix.
+
+I decided to not listen for the recyclerView position on scroll and implement the offset logic,
+to not spend time on that since could be tricky to debug.
+Nonetheless since the API has an offset, this indicates me that we want to paginate the request.
+The idea is to manage the offset logic inside the interactor to be able to test later some edge
+cases.
+
+## TimeCalculator
+- This was created to have a little bit more logic to do in the domain layer, to showcase how
+different interactors can be used together
+
+## StringResources
+It’s an interface to be able to do string management on the domain layer and presenter without
+needing a context.
+Sometimes there are very large and complex string mapping, that kind of logic should be tested,
+with this is interface you can do it using unit tests.
