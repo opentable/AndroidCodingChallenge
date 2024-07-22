@@ -46,3 +46,22 @@ To parse json instead of Gson since has been reported better performance and it'
 
 ## Use @Json in all response properties
 To avoid parsing errors if the class is obfuscated and the names are changed.
+
+## Usage of Timber
+It's very convenient to have the name of the class out of the box, where the log was emitted.
+Also planting trees to send logs depending on the build time it's convenient.
+
+## Addition of local database
+This was added to mitigate network error connections, handle configuration changes (don't need to
+make a new request) and having a single source of truth, this last point comes very handy
+since I can start observing the local database, insert the items from the remote source and
+out of the box I'll see the books reflected on my view. Also with this I can still observing
+ if the remote source throws an error.
+
+## SQLDelight
+I like this abstraction of SQL because it takes advantage of all your SQL knowledge, you don't need
+to learn new things to express SQL.
+On the same point it's also nice that it generate models from your SQL queries and tables.
+Another good point it's that SQLDelight is a kotlin multiplatform library (I think room can
+be used on KMP too :P).
+I have experience with Room tho.

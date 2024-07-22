@@ -1,5 +1,9 @@
 package com.example.otchallenge.books.domain
 
+import com.care.sdk.utils.StringResources
+import com.example.otchallenge.R
+import com.example.otchallenge.books.presentation.BookUiModel
+
 data class BooksData(
     val lastModified: String,
     val books: List<Book>
@@ -13,10 +17,18 @@ data class Book(
     val image: String,
     val imageWidth: Int,
     val imageHeight: Int,
-    val isbns: List<Isbn>
+    val isbns: String
 )
 
-data class Isbn(
-    val isbn10: String,
-    val isbn13: String
-)
+fun Book.toBookUiModel(stringResources: StringResources): BookUiModel {
+    return BookUiModel(
+        publisher = stringResources.getString(R.string.publisher, publisher),
+        description = description,
+        title = title,
+        image = image,
+        imageWidth = imageWidth,
+        imageHeight = imageHeight,
+        author = stringResources.getString(R.string.author, author),
+        isbns = stringResources.getString(R.string.isbn, isbns)
+    )
+}

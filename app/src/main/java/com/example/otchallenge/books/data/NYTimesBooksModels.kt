@@ -1,6 +1,5 @@
 package com.example.otchallenge.books.data
 
-import com.example.otchallenge.books.domain.Book
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
@@ -20,6 +19,7 @@ data class Results(
 
 @JsonClass(generateAdapter = true)
 data class NYTimeBook(
+    @Json(name = "primary_isbn10") val primaryIsbn10: String,
     @Json(name = "publisher") val publisher: String,
     @Json(name = "description") val description: String,
     @Json(name = "title") val title: String,
@@ -34,19 +34,8 @@ data class NYTimeBook(
 data class Isbn(
     @Json(name = "isbn10") val isbn10: String,
     @Json(name = "isbn13") val isbn13: String
-)
-
-fun NYTimeBook.toDomainBook() : Book {
-    return Book(
-        publisher = publisher,
-        description = description,
-        title = title,
-        image = bookImage,
-        imageWidth = bookImageWidth,
-        imageHeight = bookImageHeight,
-        author = author,
-        isbns = isbns.map { isbn ->
-            com.example.otchallenge.books.domain.Isbn(isbn10 = isbn.isbn10, isbn13 = isbn.isbn13)
-        }
-    )
+) {
+    fun convertStringSeparatedByCommas(): String {
+        return "$isbn10, $isbn13"
+    }
 }

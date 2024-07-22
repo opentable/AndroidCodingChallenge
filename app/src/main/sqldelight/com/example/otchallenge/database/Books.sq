@@ -1,0 +1,29 @@
+CREATE TABLE BooksTable (
+    primary_isbn10 TEXT NOT NULL PRIMARY KEY,
+    publisher TEXT NOT NULL,
+    description TEXT NOT NULL,
+    title TEXT NOT NULL,
+    author TEXT NOT NULL,
+    book_image TEXT NOT NULL,
+    book_image_width INTEGER NOT NULL,
+    book_image_height INTEGER NOT NULL,
+    isbns TEXT NOT NULL,
+    last_modified TEXT NOT NULL
+);
+
+selectAll:
+SELECT * FROM BooksTable;
+
+insert:
+INSERT OR REPLACE INTO BooksTable (
+    primary_isbn10,
+    publisher,
+    description,
+    title,
+    author,
+    book_image,
+    book_image_width,
+    book_image_height,
+    isbns,
+    last_modified
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);

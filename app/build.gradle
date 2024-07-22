@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kapt)
+    alias(libs.plugins.sqlDelight)
 }
 
 android {
@@ -45,6 +46,14 @@ android {
     }
 }
 
+sqldelight {
+    databases {
+        Database { // This will be the name of the generated database class.
+            packageName = "com.example.otchallenge"
+        }
+    }
+}
+
 dependencies {
 
     implementation libs.androidx.core.ktx
@@ -74,6 +83,10 @@ dependencies {
 
     //logging
     implementation libs.timber
+
+    //Persistence
+    implementation libs.sqlDelight
+    implementation libs.sqlDelight.rxJava
 
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit

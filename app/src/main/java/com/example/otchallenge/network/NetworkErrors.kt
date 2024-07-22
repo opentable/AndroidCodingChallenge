@@ -1,5 +1,5 @@
 package com.example.otchallenge.network
 
-class NetworkError: Throwable()
+class NetworkError(error: String = ""): Throwable(error)
 
-class NoResponseBodyError: Throwable()
+class NoResponseBodyError(error: String = ""): Throwable(error)
