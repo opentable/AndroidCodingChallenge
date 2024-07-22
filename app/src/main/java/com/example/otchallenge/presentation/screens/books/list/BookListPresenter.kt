@@ -17,6 +17,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -39,6 +40,9 @@ class BookListPresenter @Inject constructor (
         view: BookListContract.View,
     ) {
         this.view = view
+
+        view.setActionBar()
+
         subscriptions = CompositeDisposable().apply {
             observePageUpdate()
             observeInternetConnectionAvailability()
@@ -54,6 +58,15 @@ class BookListPresenter @Inject constructor (
         subscriptions = null
         view = null
     }
+
+    override val listName: String
+        get() = "Hardcover Fiction"
+
+    override val isDateToday: Boolean
+        get() = true
+
+    override val date: LocalDate
+        get() = LocalDate.now()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun subscribeToList(coroutineScope: CoroutineScope) {

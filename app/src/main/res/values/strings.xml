@@ -8,6 +8,10 @@
     <string name="common_list_books_loading_error_timeout">Waiting server response timeout. Please try again later or contact technical support.</string>
     <string name="common_list_books_loading_error_unknown">An error occurred while fetching books. Please contact technical support.</string>
 
+    <!-- Common image strings -->
+    <string name="common_image_bookCover_loading">Loading cover</string>
+    <string name="common_image_bookCover_downloadFailed">Failed to load cover</string>
+
     <!-- Common dialog titles -->
     <string name="common_dialog_title_error">Error occurred!</string>
 
@@ -19,4 +23,8 @@
     <!-- Footer labels -->
     <string name="footer_label_loadingFailed">Loading more items failed!</string>
     <string name="footer_label_loadingMore">Loading more...</string>
+
+    <!-- Other labels -->
+    <string name="label_current">Current</string>
+    <string name="date_format">MMM dd, yyyy</string>
 </resources>

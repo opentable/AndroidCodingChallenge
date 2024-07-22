@@ -5,19 +5,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.PagingData
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.example.otchallenge.R
 import com.example.otchallenge.data.model.Book
 import com.example.otchallenge.data.remote.RemoteRequestError
 import com.example.otchallenge.databinding.FragmentBookListBinding
 import com.example.otchallenge.presentation.components.AlertDialogFragment
 import com.example.otchallenge.presentation.components.DaggerRetainedFragment
+import com.example.otchallenge.presentation.components.MarginItemDecoration
+import com.example.otchallenge.presentation.extensions.WindowSizeClass
+import com.example.otchallenge.presentation.extensions.getWidthSizeClass
 import com.example.otchallenge.presentation.extensions.isEmpty
 import com.example.otchallenge.presentation.extensions.subscribeToEvent
 import io.reactivex.disposables.CompositeDisposable
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
@@ -80,6 +87,19 @@ class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
         return bookListAdapter?.itemCount ?: 0
     }
 
+    override fun setActionBar() {
+        (requireActivity() as AppCompatActivity).supportActionBar?.apply {
+            title = presenter.listName
+            subtitle = if (!presenter.isDateToday) {
+                getString(R.string.label_current)
+            } else {
+                presenter.date.format(
+                    DateTimeFormatter.ofPattern(getString(R.string.date_format))
+                )
+            }
+        }
+    }
+
     private fun FragmentBookListBinding.setupView() {
         binding = this
         setUpViewsVisibility()
@@ -99,10 +119,12 @@ class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
 
     private fun FragmentBookListBinding.setUpList() {
         bookList.apply {
-            layoutManager = LinearLayoutManager(
-                requireContext(),
-                LinearLayoutManager.VERTICAL,
-                false
+            layoutManager = setupLayoutManager()
+            addItemDecoration(
+                MarginItemDecoration(
+                    horizontal = 16,
+                    vertical = 16
+                )
             )
             adapter = setupListAdapter().withLoadStateFooter(
                 BookListFooterAdapter(
@@ -111,6 +133,23 @@ class BookListFragment : DaggerRetainedFragment(), BookListContract.View {
                     },
                     onRetryClick = { bookListAdapter?.retry() }
                 )
+            )
+        }
+    }
+
+    private fun setupLayoutManager(): LayoutManager {
+        return if (requireActivity().getWidthSizeClass <= WindowSizeClass.Medium) {
+            LinearLayoutManager(
+                requireContext(),
+                LinearLayoutManager.VERTICAL,
+                false
+            )
+        } else {
+            GridLayoutManager(
+                requireContext(),
+                3,
+                GridLayoutManager.VERTICAL,
+                false
             )
         }
     }

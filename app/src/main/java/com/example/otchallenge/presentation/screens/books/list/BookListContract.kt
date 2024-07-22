@@ -4,10 +4,12 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.PagingData
 import com.example.otchallenge.data.model.Book
 import kotlinx.coroutines.CoroutineScope
+import java.time.LocalDate
 
 interface BookListContract {
 
     interface View {
+        fun setActionBar()
         fun submitPage(page: PagingData<Book>)
         fun retryLoading()
         fun listItemCount(): Int
@@ -20,6 +22,9 @@ interface BookListContract {
     }
 
     interface Presenter {
+        val listName: String
+        val date: LocalDate
+        val isDateToday: Boolean
         fun attachView(view: View)
         fun detachView()
         fun subscribeToList(coroutineScope: CoroutineScope)

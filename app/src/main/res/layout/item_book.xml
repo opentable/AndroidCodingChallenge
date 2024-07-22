@@ -11,14 +11,12 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <ImageView
-            android:id="@+id/book_cover"
-            android:layout_width="60dp"
-            android:layout_height="100dp"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="end"
+            app:constraint_referenced_ids="book_cover,book_cover_loading,book_cover_load_failed" />
 
         <TextView
             android:id="@+id/book_title"
@@ -27,10 +25,11 @@
             android:layout_marginStart="16dp"
             android:ellipsize="end"
             android:maxLines="2"
-            app:layout_constraintBottom_toTopOf="@+id/book_author"
+            android:textSize="@dimen/book_title_size"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/book_cover"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/barrier"
+            app:layout_constraintTop_toTopOf="@+id/book_cover"
             tools:text="Harry Potter" />
 
         <TextView
@@ -38,22 +37,53 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:ellipsize="end"
-            app:layout_constraintBottom_toBottomOf="@id/book_cover"
+            android:textSize="@dimen/book_author_size"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/book_cover"
+            app:layout_constraintStart_toEndOf="@+id/barrier"
             app:layout_constraintTop_toBottomOf="@+id/book_title"
             tools:text="J.K. Rowling" />
 
         <TextView
             android:id="@+id/book_description"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:textColor="@color/material_dynamic_neutral50"
+            android:textSize="@dimen/book_description_size"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/barrier"
+            app:layout_constraintTop_toBottomOf="@+id/book_author"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageView
+            android:id="@+id/book_cover"
+            android:layout_width="@dimen/book_cover_width"
+            android:layout_height="@dimen/book_cover_height"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/book_cover" />
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <include
+            android:id="@+id/book_cover_loading"
+            layout="@layout/placeholder_book_cover_loading"
+            android:layout_width="100dp"
+            android:layout_height="140dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <include
+            android:id="@+id/book_cover_load_failed"
+            layout="@layout/placeholder_book_cover_error"
+            android:layout_width="100dp"
+            android:layout_height="140dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
