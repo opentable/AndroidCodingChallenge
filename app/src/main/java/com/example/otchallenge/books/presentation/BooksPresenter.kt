@@ -5,8 +5,9 @@ import com.example.otchallenge.R
 import com.example.otchallenge.books.domain.BooksData
 import com.example.otchallenge.books.domain.BooksFetcher
 import com.example.otchallenge.books.domain.toBookUiModel
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -14,25 +15,30 @@ import javax.inject.Inject
 class BooksPresenterImpl @Inject constructor(
     private val booksFetcher: BooksFetcher,
     private val booksView: BooksView,
-    private val stringResources: StringResources
+    private val stringResources: StringResources,
+    private val observeOnScheduler: Scheduler
 ): BookPresenter {
 
     override fun fetchBooksFromLocal(): Disposable {
         return booksFetcher.fetchBooksFromLocal()
-            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .observeOn(observeOnScheduler)
             .subscribe(::onLocalBooksSuccess, ::onBooksError)
     }
 
     override fun fetchBooksFromRemote(offset: Int): Disposable {
         booksView.setLoading(true)
         return booksFetcher.fetchBooksFromRemote(offset)
-            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .observeOn(observeOnScheduler)
             .subscribe(::onRemoteBooksSuccess, ::onBooksError)
     }
 
     override fun retryLastFetch(): Disposable {
+        booksView.setLoading(true)
         return booksFetcher.retryLastFetch()
-            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .observeOn(observeOnScheduler)
             .subscribe(::onRemoteBooksSuccess, ::onBooksError)
     }
 

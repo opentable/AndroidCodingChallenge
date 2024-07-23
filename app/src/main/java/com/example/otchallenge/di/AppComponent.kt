@@ -12,6 +12,8 @@ import dagger.BindsInstance
 import dagger.Component
 import dagger.Module
 import dagger.Provides
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -37,6 +39,8 @@ interface AppComponent {
 	fun stringResources(): StringResources
 
 	fun sqlDatabase(): Database
+
+	fun scheduler(): Scheduler
 
 	@Component.Builder
 	interface Builder {
@@ -80,5 +84,8 @@ interface ApplicationModule {
 		fun provideSQLDatabase(context: Context): Database = Database(
 			AndroidSqliteDriver(Database.Schema, context, "books.db")
 		)
+
+		@Provides
+		fun providesMainScheduler(): Scheduler = AndroidSchedulers.mainThread()
 	}
 }

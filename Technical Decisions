@@ -112,3 +112,15 @@ turns depends on AppComponent (all component will).
 One of the reasons to have different components is to delimit your dependencies,
 and not leak unnecessary objects in other screens, this is more clear when you have multiple
 fragment inside the same activity.
+
+## Unit Tests
+I prefer to use fakes instead of Mocks, because I have seen how mocks encourage bad practices,
+for example encourage to check if a method was called instead of checking the state of the class,
+which can be different.
+The former test the implementation details, the later test if the required result is obtained.
+This produces brittle tests that need a lot of maintenance, when the implementation details change.
+Nonetheless mocks have a place where you cannot instantiate or extends a class.
+
+Also I removed subscribeOn from BooksFetcher because it was not possible to test the methods since
+those were running on different threads. The initial decision was to mitigate risk of running
+interactor methods on the main thread.

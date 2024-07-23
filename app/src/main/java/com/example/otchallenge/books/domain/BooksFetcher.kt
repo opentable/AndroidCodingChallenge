@@ -6,7 +6,6 @@ import com.example.otchallenge.network.NetworkError
 import com.example.otchallenge.network.NoResponseBodyError
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class BooksFetcher @Inject constructor(
@@ -25,14 +24,14 @@ class BooksFetcher @Inject constructor(
         if(!shouldFetchBooks(offset))
             return Single.just(false)
 
-        return booksRepository.fetchBooksFromRemote(offset).subscribeOn(Schedulers.io())
+        return booksRepository.fetchBooksFromRemote(offset)
             .doOnSuccess { onRemoteSuccess(offset) }
             .onErrorResumeNext(::onRemoteError)
     }
 
     fun retryLastFetch(): Single<Boolean> {
         if (biggestOffset == -1) biggestOffset = 0
-        return booksRepository.fetchBooksFromRemote(biggestOffset).subscribeOn(Schedulers.io())
+        return booksRepository.fetchBooksFromRemote(biggestOffset)
             .doOnSuccess { onRemoteSuccess(biggestOffset) }
             .onErrorResumeNext(::onRemoteError)
     }
@@ -54,7 +53,6 @@ class BooksFetcher @Inject constructor(
 
     fun fetchBooksFromLocal(): Observable<BooksData> {
         return booksRepository.fetchAllBooks()
-            .subscribeOn(Schedulers.io())
             .map { onLocalSuccess(it) }
             .onErrorResumeNext(::onLocalError)
     }
