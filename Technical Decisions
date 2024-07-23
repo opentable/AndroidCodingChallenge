@@ -1,0 +1,126 @@
+# Decisions
+
+## Split by feature
+I'm in favor to split the application by packages representing a feature.
+Reasons:
+- Eases the search of code
+- At one glance you can see the entire architecture and possibly what the application does or
+contains
+- Easier to convert to a multimodule app. For example if you want to share an entire feature with
+ another application.
+
+Then inside of every feature, split it by layers, like data, domain and presentation.
+- Easier to convert to a multimodule app where you want to share repositories, business logic
+required in other parts of the app, etc.
+This can improve development velocity, specially when there are complex API calls that need to be
+mapped. Avoid repetition or explosion of GQL queries doing the same thing, and in general avoid
+repetition.
+- Clear boundaries to know the dependency flow, for example the domain layer doesn't need to
+know about presentation layer.
+
+# With the current information, I'll assume that our application it's for the NY times.
+ Then one of the features is showing all the information related with the NY times books.
+ Then another feature could be showing the news, and so on.
+ That's why I'm creating a 'books' package.
+
+## Meaning of data, domain and presentation
+Data - is from where all your information comes, for example databases, files, SP,
+network requests, etc.
+Domain - Where all your business logic lives, the most important part of your app.
+Shouldn't contain framework dependencies, just pure kotlin/java code.
+The reason of the last statement is to be able to test that layer very quick with unit tests.
+Presentation - Where the views exist. Could be activities, fragments, views or composables.
+Also in this layer you perform logic view operations.
+The control flow is, presentation -> domain -> data, but we will invert the dependecy
+ flow with an interface between domain and data, which will be explained in the next section.
+
+## Creation of BooksRepository interface inside of Domain package
+Since domain package is where all our business logic resides, and it's the most important part
+of the app, everything else should be interchangeable. With this interface we can invert
+dependencies and not depend on data layer. In another words we can change the repository for
+another implementation and the domain layer will remain unchanged.
+Another advantage is that we can inject a fake for testing purposes.
+
+## Usage of Moshi
+To parse json instead of Gson since has been reported better performance and it's 100% in kotlin.
+
+## Use @Json in all response properties
+To avoid parsing errors if the class is obfuscated and the names are changed.
+
+## Usage of Timber
+It's very convenient to have the name of the class out of the box, where the log was emitted.
+Also planting trees to send logs depending on the build time it's convenient.
+
+## Addition of local database
+This was added to mitigate network error connections, handle configuration changes (don't need to
+make a new request) and having a single source of truth, this last point comes very handy
+since I can start observing the local database, insert the items from the remote source and
+out of the box I'll see the books reflected on my view. Also with this I can still observing
+ if the remote source throws an error.
+
+## SQLDelight
+I like this abstraction of SQL because it takes advantage of all your SQL knowledge, you don't need
+to learn new things to express SQL.
+On the same point it's also nice that it generate models from your SQL queries and tables.
+Another good point it's that SQLDelight is a kotlin multiplatform library (I think room can
+be used on KMP too :P).
+I have experience with Room tho.
+
+## Books Fetcher
+Interactor or Use case class that handles the business logic related with fetching the books.
+You can use this class whenever you want to fetch books and will return a domain/BooksData class,
+not a specific presentation class.
+I like to name things based on what they do, but I always adapt on what the project does, for
+example google recommends using UseCase suffix.
+
+I decided to not listen for the recyclerView position on scroll and implement the offset logic,
+to not spend time on that since could be tricky to debug.
+Nonetheless since the API has an offset, this indicates me that we want to paginate the request.
+The idea is to manage the offset logic inside the interactor to be able to test later some edge
+cases.
+
+## TimeCalculator
+- This was created to have a little bit more logic to do in the domain layer, to showcase how
+different interactors can be used together
+
+## StringResources
+It’s an interface to be able to do string management on the domain layer and presenter without
+needing a context.
+Sometimes there are very large and complex string mapping, that kind of logic should be tested,
+with this is interface you can do it using unit tests.
+
+## Inject baseUrl
+This enables changing the baseUrl to provide different environments for QA/Testing purposes,
+which I found very handy in different projects.
+
+## Dagger Modules
+Are interfaces to avoid having state on the modules, also is the recommended way by the guidelines.
+
+## BooksUiModel
+This class was created to not leak domain layer objects into the view.
+Domain layer data classes have different responsabilities, therefore different reasons to change.
+
+## BookPresenter and BooksView interfaces
+Those are interfaces to be able to test the presenter without the need of an instrumentation test.
+BooksPresenter should be created to invert dependencies with the view. So now the presenter doesn’t
+know directly about the view, the view can be changed by a fragment or a View instead of an
+activity and the presenter wouldn’t know.
+
+## BooksComponent
+This component represents the dependencies that will be available for the BooksActivity, which in
+turns depends on AppComponent (all component will).
+One of the reasons to have different components is to delimit your dependencies,
+and not leak unnecessary objects in other screens, this is more clear when you have multiple
+fragment inside the same activity.
+
+## Unit Tests
+I prefer to use fakes instead of Mocks, because I have seen how mocks encourage bad practices,
+for example encourage to check if a method was called instead of checking the state of the class,
+which can be different.
+The former test the implementation details, the later test if the required result is obtained.
+This produces brittle tests that need a lot of maintenance, when the implementation details change.
+Nonetheless mocks have a place where you cannot instantiate or extends a class.
+
+Also I removed subscribeOn from BooksFetcher because it was not possible to test the methods since
+those were running on different threads. The initial decision was to mitigate risk of running
+interactor methods on the main thread.

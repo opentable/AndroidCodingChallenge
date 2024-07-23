@@ -1,3 +1,12 @@
 <resources>
 	<string name="app_name">AndroidOTChallenge</string>
+	<string name="books">Books</string>
+	<string name="no_response_body_error">Sorry try again later )=</string>
+	<string name="network_error">We\'re having technical difficulties right now, try later</string>
+	<string name="no_books_found">No books found</string>
+	<string name="try_again">Try Again</string>
+	<string name="author">Author: %s</string>
+	<string name="publisher">Publisher: %s</string>
+	<string name="isbn">ISBN: %s</string>
+	<string name="last_modification">Last modification: %s</string>
 </resources>

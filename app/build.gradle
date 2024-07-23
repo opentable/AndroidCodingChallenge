@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kapt)
+    alias(libs.plugins.sqlDelight)
 }
 
 android {
@@ -19,6 +20,15 @@ android {
     }
 
     buildTypes {
+        debug {
+            def localProperties = new Properties()
+            File file = rootProject.file("local.properties")
+            if(file.exists()) {
+                localProperties.load(new FileInputStream(file))
+                def nyTimesApiKey = localProperties['nyTimesApiKey']
+                buildConfigField "String", "nyTimesApiKey", "\"$nyTimesApiKey\""
+            }
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -30,6 +40,17 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+    buildFeatures {
+        buildConfig = true
+    }
+}
+
+sqldelight {
+    databases {
+        Database { // This will be the name of the generated database class.
+            packageName = "com.example.otchallenge"
+        }
     }
 }
 
@@ -47,6 +68,7 @@ dependencies {
     //retrofit
     implementation libs.retrofit
     implementation libs.retrofit.rx.adapter
+    implementation libs.retrofit.moshi
 
     //glide
     implementation libs.glide
@@ -55,6 +77,16 @@ dependencies {
     implementation libs.rx.android
     implementation libs.rx.java
     implementation libs.rx.kotlin
+
+    //moshi
+    kapt libs.moshi.codegen
+
+    //logging
+    implementation libs.timber
+
+    //Persistence
+    implementation libs.sqlDelight
+    implementation libs.sqlDelight.rxJava
 
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit

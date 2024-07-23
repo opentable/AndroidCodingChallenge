@@ -5,15 +5,43 @@
 	android:id="@+id/main"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	tools:context=".MainActivity">
+	tools:context=".books.presentation.BooksActivity">
+
+	<androidx.appcompat.widget.Toolbar
+		android:id="@+id/toolbar"
+		android:layout_width="match_parent"
+		android:layout_height="?attr/actionBarSize"
+		android:background="?attr/colorPrimary"
+		android:title="@string/books"
+		android:titleTextColor="@android:color/white"
+		app:layout_constraintTop_toTopOf="parent"
+		app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
 	<TextView
+		android:id="@+id/last_modified_tv"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:maxLines="1"
+		android:textAlignment="textEnd"
+		app:layout_constraintTop_toBottomOf="@id/toolbar"/>
+
+	<androidx.recyclerview.widget.RecyclerView
+		android:id="@+id/books_rv"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		app:layout_constraintTop_toBottomOf="@id/last_modified_tv"
+		app:layout_constraintBottom_toBottomOf="parent"
+		tools:listitem="@layout/book_item"
+		app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+		tools:itemCount="5"/>
+
+	<ProgressBar
+		android:id="@+id/progressbar"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="Hello World!"
+		app:layout_constraintTop_toTopOf="parent"
 		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent" />
+		app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
