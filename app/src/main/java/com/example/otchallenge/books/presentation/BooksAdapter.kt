@@ -50,7 +50,11 @@ class BooksAdapter(
         private val isbns = view.findViewById<TextView>(R.id.isbns_tv)
 
         fun bind(book: BookUiModel) {
-            glide.load(book.image).override(book.imageWidth, book.imageHeight).centerCrop().into(image)
+            glide.load(book.image)
+                .override(book.imageWidth, book.imageHeight)
+                .centerCrop()
+                .placeholder(R.drawable.ic_launcher_foreground)
+                .into(image)
             title.text = book.title
             description.text = book.description
             author.text = book.author

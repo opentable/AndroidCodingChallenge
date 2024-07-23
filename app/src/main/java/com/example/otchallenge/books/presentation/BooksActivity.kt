@@ -17,6 +17,7 @@ import com.example.otchallenge.R
 import com.example.otchallenge.books.di.DaggerBooksComponent
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 class BooksActivity : AppCompatActivity(), BooksView {
@@ -29,6 +30,7 @@ class BooksActivity : AppCompatActivity(), BooksView {
 	private lateinit var progressBar: ProgressBar
 	private lateinit var booksAdapter: BooksAdapter
 	private val compositeDisposable: CompositeDisposable = CompositeDisposable()
+	private var retryDisposable: Disposable? = null
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		DaggerBooksComponent
@@ -79,10 +81,13 @@ class BooksActivity : AppCompatActivity(), BooksView {
 	}
 
 	override fun showTryAgainError(error: String) {
-		Snackbar.make(mainView, error, Snackbar.LENGTH_LONG).apply {
+		Snackbar.make(mainView, error, Snackbar.LENGTH_INDEFINITE).apply {
 			show()
 			setAction(R.string.try_again) {
-				compositeDisposable.add(booksPresenter.retryLastFetch())
+				retryDisposable?.dispose()
+				retryDisposable = booksPresenter.retryLastFetch().also {
+					compositeDisposable.add(it)
+				}
 			}
 		}
 	}
