@@ -7,8 +7,14 @@ interface HomeViewModel {
 
     val viewTypeListState: LiveData<ViewTypeList>
     val bookList: LiveData<List<ItemBook>>
+    val isLoading: LiveData<Boolean>
 
     fun toggleViewTypeList(currentState: ViewTypeList)
 
     fun getBooks()
+}
+
+enum class ViewTypeList {
+    VERTICAL,
+    CAROUSEL,
 }

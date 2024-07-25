@@ -11,19 +11,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class ViewTypeList {
-    VERTICAL,
-    CAROUSEL,
-}
-
 @HiltViewModel
 class HomeViewModelImpl @Inject constructor(
-    val booksUseCase: GetBooksUseCase,
-) : ViewModel(), HomeViewModel {
+    private val booksUseCase: GetBooksUseCase,
+) : HomeViewModel, ViewModel() {
 
     override val viewTypeListState: MutableLiveData<ViewTypeList> =
         MutableLiveData(ViewTypeList.CAROUSEL)
     override val bookList: MutableLiveData<List<ItemBook>> = MutableLiveData()
+    override val isLoading: MutableLiveData<Boolean> = MutableLiveData(false)
 
     override fun toggleViewTypeList(currentState: ViewTypeList) {
         val newState = when (currentState) {
@@ -35,12 +31,16 @@ class HomeViewModelImpl @Inject constructor(
 
     override fun getBooks() {
         viewModelScope.launch {
+            isLoading.postValue(true)
             when (val result = booksUseCase.invoke()) {
-                is ResultData.Success -> bookList.postValue(result.data)
+                is ResultData.Success -> {
+                    bookList.postValue(result.data)
+                }
                 is ResultData.Error -> {
                     Log.e("error", "book case result", result.error)
                 }
             }
+            isLoading.postValue(false)
         }
     }
 }

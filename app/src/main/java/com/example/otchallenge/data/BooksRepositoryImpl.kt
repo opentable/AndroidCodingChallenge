@@ -15,7 +15,7 @@ import javax.inject.Inject
 const val API_KEY = "KoRB4K5LRHygfjCL2AH6iQ7NeUqDAGAB"
 
 class BooksRepositoryImpl @Inject constructor(
-    val booksApi: BooksService,
+    private val booksApi: BooksService,
 ) : BooksRepository {
     override suspend fun getBooks(): ResultData<List<ItemBook>> = withContext(Dispatchers.IO) {
         return@withContext try {
