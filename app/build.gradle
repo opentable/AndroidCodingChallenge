@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kapt)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.dagger.hilt.android)
 }
 
 android {
@@ -31,6 +33,13 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    hilt {
+        enableAggregatingTask = true
+    }
+    buildFeatures {
+        viewBinding true
+        buildConfig true
+    }
 }
 
 dependencies {
@@ -40,13 +49,25 @@ dependencies {
     implementation libs.material
     implementation libs.androidx.activity
     implementation libs.androidx.constraintlayout
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     // dagger
     implementation libs.dagger
-    kapt libs.dagger.compiler
+    ksp libs.dagger.compiler
+    // hilt
+    implementation libs.dagger.hilt.android
+    ksp libs.dagger.hilt.compiler
 
     //retrofit
     implementation libs.retrofit
+    implementation(libs.retrofit.converter.moshi)
     implementation libs.retrofit.rx.adapter
+
+    implementation(platform(libs.okhttp.bom))
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+
+    implementation(libs.moshi.kotlin)
+    ksp(libs.moshi.kotlin.codegen)
 
     //glide
     implementation libs.glide
@@ -58,5 +79,9 @@ dependencies {
 
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
+    testImplementation libs.mockito.core
+    testImplementation libs.mockito.kotlin
+    testImplementation libs.mockk
     androidTestImplementation libs.androidx.espresso.core
+    testImplementation libs.kotlinx.coroutines.test
 }

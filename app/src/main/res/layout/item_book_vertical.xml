@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="12dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/imgBook"
+        android:layout_width="80dp"
+        android:layout_height="110dp"
+        android:elevation="8dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.RoundedImageView"
+        tools:src="@drawable/book_placeholder" />
+
+    <Space
+        android:id="@+id/horizontalSpace"
+        android:layout_width="8dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="6dp"
+        app:layout_constraintBottom_toBottomOf="@id/imgBook"
+        app:layout_constraintStart_toEndOf="@id/imgBook"
+        app:layout_constraintTop_toTopOf="@id/imgBook" />
+
+    <TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/horizontalSpace"
+        app:layout_constraintTop_toTopOf="@id/horizontalSpace"
+        tools:text="The Women" />
+
+    <TextView
+        android:id="@+id/txtAuthor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/horizontalSpace"
+        app:layout_constraintTop_toBottomOf="@id/txtTitle"
+        tools:text="Kristin Hannah" />
+
+    <TextView
+        android:id="@+id/txtDescription"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@id/txtISBN"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/horizontalSpace"
+        app:layout_constraintTop_toBottomOf="@id/txtAuthor"
+        tools:text="In 1965, a nursing student follows her brother to serve during the Vietnam War and returns to a divided America." />
+
+    <TextView
+        android:id="@+id/txtISBNLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_isbn10"
+        android:textSize="12sp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/txtISBN"
+        tools:ignore="SmallSp" />
+
+    <TextView
+        android:id="@+id/txtISBN"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:textStyle="bold"
+        android:maxLines="2"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="SmallSp"
+        tools:text="4657890023" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
