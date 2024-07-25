@@ -1,5 +1,6 @@
 package com.example.otchallenge.presentation.home
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.Adapter
@@ -9,32 +10,7 @@ import com.example.otchallenge.databinding.ItemBookVerticalBinding
 import com.example.otchallenge.domain.entity.ItemBook
 
 class BooksAdapter : Adapter<ItemBookVerticalHolder>() {
-    private val dataSource: MutableList<ItemBook> = mutableListOf(
-        ItemBook(
-            title = "The Lord of the Rings",
-            author = "J.R.R. Tolkien",
-            description = "Epic high fantasy trilogy following the quest to destroy the One Ring.",
-            bookImageUrl = "https://storage.googleapis.com/du-prd/books/images/9780063384200.jpg",
-            amazonBuyUrl = "https://www.amazon.com/Lord-Rings-Fellowship-Ring/dp/0618057571",
-            isbn = "978-0618057576"
-        ),
-        ItemBook(
-            title = "Pride and Prejudice",
-            author = "Jane Austen",
-            description = "A witty social commentary on love and class in 19th century England.",
-            bookImageUrl = "https://storage.googleapis.com/du-prd/books/images/9780063384200.jpg",
-            amazonBuyUrl = "https://www.amazon.com/Lord-Rings-Fellowship-Ring/dp/0618057571",
-            isbn = "978-0141439518"
-        ),
-        ItemBook(
-            title = "To Kill a Mockingbird",
-            author = "Harper Lee",
-            description = "A coming-of-age story set in the American South exploring racial injustice.",
-            bookImageUrl = "https://storage.googleapis.com/du-prd/books/images/9780063384200.jpg",
-            amazonBuyUrl = "https://www.amazon.com/Kill-Mockingbird-Harper-Lee/dp/0446310786",
-            isbn = "978-0446310789"
-        )
-    )
+    private var dataSource: List<ItemBook> = listOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemBookVerticalHolder {
         val itemVertical =
@@ -44,9 +20,17 @@ class BooksAdapter : Adapter<ItemBookVerticalHolder>() {
 
     override fun getItemCount(): Int = dataSource.size
 
-
     override fun onBindViewHolder(holder: ItemBookVerticalHolder, position: Int) {
         holder.bind(dataSource[position])
+    }
+
+    // this is just for the sample, we should use a diff callback
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateData(bookList: List<ItemBook>) {
+        if (dataSource.containsAll(bookList).not()) {
+            dataSource = bookList
+            notifyDataSetChanged()
+        }
     }
 }
 

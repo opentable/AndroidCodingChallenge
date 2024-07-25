@@ -9,7 +9,7 @@ interface BooksService {
 
     @GET("svc/books/v3/lists/current/hardcover-fiction.json")
     suspend fun getBooks(
-        @Query("apiKey") apikey: String,
+        @Query("api-key") apikey: String,
         @Query("offset") offset: String = "0",
     ): Response<BooksResponse>
 }

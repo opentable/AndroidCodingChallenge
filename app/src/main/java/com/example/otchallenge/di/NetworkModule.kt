@@ -1,4 +1,4 @@
-package com.example.otchallenge.data.network.di
+package com.example.otchallenge.di
 
 import com.example.otchallenge.BuildConfig
 import com.example.otchallenge.data.network.BooksService
@@ -13,11 +13,12 @@ import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-object RetrofitModule {
+object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideRetrofit(): Retrofit = createRetrofit("https://api.nytimes.com/", BuildConfig.DEBUG)
+    fun provideNetworkClient(): Retrofit =
+        createRetrofit("https://api.nytimes.com/", BuildConfig.DEBUG)
 
     @Provides
     fun provideBooksService(retrofit: Retrofit): BooksService = retrofit.create()
