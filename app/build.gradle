@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kapt)
+    alias(libs.plugins.dagger.hilt.android)
 }
 
 android {
@@ -31,6 +32,9 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    hilt {
+        enableAggregatingTask = true
+    }
 }
 
 dependencies {
@@ -43,6 +47,9 @@ dependencies {
     // dagger
     implementation libs.dagger
     kapt libs.dagger.compiler
+    // hilt
+    implementation libs.dagger.hilt.android
+    kapt libs.dagger.hilt.compiler
 
     //retrofit
     implementation libs.retrofit
